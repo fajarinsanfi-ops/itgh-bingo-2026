@@ -12,4 +12,5 @@ export const firebaseConfig = {
 
 // Replace with the OAuth 2.0 Web Client ID from Google Cloud Console.
 // Example: 1234567890-xxxxxxxxxxxxxxxx.apps.googleusercontent.com
-export const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_OAUTH_WEB_CLIENT_ID.apps.googleusercontent.com";
+export const GOOGLE_CLIENT_ID =
+  "703561670119-85kfd2870o6ic0v8hhobnk4gd9f27671.apps.googleusercontent.com";
