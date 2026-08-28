@@ -1,12 +1,13 @@
 // Replace these values with your Firebase Web App configuration.
 // Firebase Console -> Project settings -> Your apps -> Web app
 export const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.firebasestorage.app",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_FIREBASE_APP_ID"
+  apiKey: "AIzaSyAMjG4-hVh9UJg5a5r6RQE-YSnglhVFYjs",
+  authDomain: "itgh-bingo-2026.firebaseapp.com",
+  projectId: "itgh-bingo-2026",
+  storageBucket: "itgh-bingo-2026.firebasestorage.app",
+  messagingSenderId: "703561670119",
+  appId: "1:703561670119:web:a153c2841839375c553142",
+  measurementId: "G-0N74LN5SMG"
 };
 
 // Replace with the OAuth 2.0 Web Client ID from Google Cloud Console.
