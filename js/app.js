@@ -240,9 +240,14 @@ function render() {
      COMPLETED CHALLENGES
   ------------------------- */
 
-  const completed =
+    const completed =
     new Set(
       state.submissions
+        .filter(
+          x =>
+            x.variant === state.variant &&
+            x.week === state.week
+        )
         .map(x => x.challengeIndex)
     );
 
@@ -505,8 +510,10 @@ function resetChallengeForm() {
     evidence.value = "";
   }
 
-  if (uploadStatus) {
+    if (uploadStatus) {
     uploadStatus.textContent = "";
+    uploadStatus.style.color = "";
+    uploadStatus.style.fontWeight = "";
   }
 }
 
@@ -544,10 +551,12 @@ function openChallenge(index) {
 
   /* Check duplicate before opening */
 
-  if (
+    if (
     state.submissions.some(
       x =>
-        x.challengeIndex === index
+        x.challengeIndex === index &&
+        x.variant === state.variant &&
+        x.week === state.week
     )
   ) {
 
@@ -688,11 +697,13 @@ async function submitChallenge() {
      DUPLICATE PROTECTION
   ------------------------- */
 
-  if (
+    if (
     state.submissions.some(
       x =>
         x.challengeIndex ===
-        state.selected
+          state.selected &&
+        x.variant === state.variant &&
+        x.week === state.week
     )
   ) {
 
@@ -904,12 +915,17 @@ async function submitChallenge() {
       err?.message ||
       "unknown error";
 
-    if ($("uploadStatus")) {
+        if ($("uploadStatus")) {
 
       $("uploadStatus").textContent =
-        `Gagal menyimpan submission (${reason}).`;
-    }
+        `❌ Gagal menyimpan submission — kode error: ${reason}`;
 
+      $("uploadStatus").style.color =
+        "#ff4d4f";
+
+      $("uploadStatus").style.fontWeight =
+        "700";
+    }
 
     toast(
       `Gagal menyimpan: ${reason}. Cek Firestore/Storage rules & console.`
@@ -1327,6 +1343,9 @@ watchAuth(user => {
     state.selected = null;
 
     state.unsubscribe?.();
+    state.submissions = [];
+
+  render();
 
     state.unsubscribe = null;
 
