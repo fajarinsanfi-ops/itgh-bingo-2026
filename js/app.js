@@ -728,20 +728,60 @@ async function submitChallenge() {
       name: ""
     };
 
-
-    if (file) {
+        if (file) {
 
       $("uploadStatus").textContent =
         "Uploading evidence...";
 
 
-      evidence =
-        await uploadEvidence(
-          state.user.uid,
-          file
-        );
-    }
+      try {
 
+        evidence =
+          await uploadEvidence(
+            state.user.uid,
+            file
+          );
+
+      } catch (evidenceErr) {
+
+        /* -------------------------
+           EVIDENCE UPLOAD GAGAL:
+           tetap lanjut simpan
+           submission TANPA evidence,
+           supaya masalah Storage
+           tidak menyandera Firestore
+        ------------------------- */
+
+        console.error(
+          "EVIDENCE UPLOAD ERROR:",
+          evidenceErr
+        );
+
+        console.error(
+          "Error code:",
+          evidenceErr?.code
+        );
+
+        console.error(
+          "Error message:",
+          evidenceErr?.message
+        );
+
+        const evReason =
+          evidenceErr?.code ||
+          evidenceErr?.message ||
+          "unknown error";
+
+        toast(
+          `Upload evidence gagal (${evReason}). Submission tetap disimpan tanpa evidence.`
+        );
+
+        evidence = {
+          url: "",
+          name: ""
+        };
+      }
+    }
 
     /* -------------------------
        FIRESTORE SAVE
