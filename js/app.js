@@ -493,15 +493,9 @@ function subscribe() {
 ========================================================= */
 
 function resetChallengeForm() {
-
-  const achievement =
-    $("achievementInput");
-
-  const evidence =
-    $("evidenceInput");
-
-  const uploadStatus =
-    $("uploadStatus");
+  const achievement = $("achievementInput");
+  const evidence = $("evidenceInput");
+  const uploadStatus = $("uploadStatus");
 
   if (achievement) {
     achievement.value = "";
@@ -514,8 +508,6 @@ function resetChallengeForm() {
   if (uploadStatus) {
     uploadStatus.textContent = "";
   }
-
-  state.selected = null;
 }
 
 
@@ -903,9 +895,7 @@ async function submitChallenge() {
 
 function closeModal(id) {
 
-  const modal =
-    $(id);
-
+  const modal = $(id);
 
   if (!modal) {
     return;
@@ -926,33 +916,30 @@ function closeModal(id) {
      RESET CHALLENGE
   ------------------------- */
 
-  if (
-    id === "challengeModal"
-  ) {
+  // Challenge modal cleanup
+  if (id === "challengeModal") {
 
     resetChallengeForm();
-  }
 
+    // Baru di sini selected dihapus
+    state.selected = null;
+  }
 
   /* -------------------------
      RESET QUIZ
   ------------------------- */
 
-  if (
-    id === "quizModal"
-  ) {
+  if (id === "quizModal") {
 
-    ["q1", "q2", "q3"]
-      .forEach(questionId => {
+    ["q1", "q2", "q3"].forEach(id => {
 
-        const el =
-          $(questionId);
+      const el = $(id);
 
-        if (el) {
-          el.value = "";
-        }
+      if (el) {
+        el.value = "";
+      }
 
-      });
+    });
   }
 }
 
