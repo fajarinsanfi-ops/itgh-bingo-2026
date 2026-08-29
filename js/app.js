@@ -829,7 +829,7 @@ async function submitChallenge() {
     );
 
 
-  } catch (err) {
+    } catch (err) {
 
     /* =====================================================
        ERROR
@@ -859,15 +859,20 @@ async function submitChallenge() {
        JIKA ERROR
     ------------------------- */
 
+    const reason =
+      err?.code ||
+      err?.message ||
+      "unknown error";
+
     if ($("uploadStatus")) {
 
       $("uploadStatus").textContent =
-        "Gagal menyimpan submission.";
+        `Gagal menyimpan submission (${reason}).`;
     }
 
 
     toast(
-      "Gagal menyimpan. Periksa Firebase configuration/rules."
+      `Gagal menyimpan: ${reason}. Cek Firestore/Storage rules & console.`
     );
 
 
