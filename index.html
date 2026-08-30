@@ -16,7 +16,6 @@
   <div class="ambient ambient-b"></div>
   <div class="grid-noise"></div>
 
-  <!-- LOGIN PAGE -->
   <section id="loginPage" class="page login-page">
     <div class="login-shell glass">
       <div class="brand-mark"><span>✦</span><span>ITGH</span></div>
@@ -24,158 +23,40 @@
       <p class="eyebrow">HEALTH CHALLENGE 2026</p>
       <h1>Welcome to<br><span>ITGH BINGO</span></h1>
       <p class="login-copy">Login dengan akun Google masing-masing personel untuk menyimpan challenge, progress, quiz, dan evidence.</p>
-
       <div id="googleButton" class="google-button-wrap"></div>
-
       <div id="loginError" class="error-message" hidden></div>
       <p class="security-note">🔐 Sign-in aman menggunakan Google Identity Services + Firebase Authentication.</p>
     </div>
   </section>
 
-  <!-- APPLICATION PAGE -->
   <section id="appPage" class="page app-page" hidden>
     <header class="topbar glass">
-      <a class="brand" href="#">
-        <span class="brand-icon">✦</span>
-        <span><b>HEALTH CHALLENGE</b><small>ITGH · 2026</small></span>
-      </a>
-
+      <a class="brand" href="#"><span class="brand-icon">✦</span><span><b>HEALTH CHALLENGE</b><small>ITGH · 2026</small></span></a>
       <div class="top-actions">
         <a class="ghost-btn nav-btn" href="./stats.html">📊 Statistics</a>
         <button id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">☾</button>
-        <div class="profile">
-          <img id="userAvatar" class="avatar" alt="Profile">
-          <div class="profile-copy">
-            <strong id="userName">User</strong>
-            <small id="userEmail">user@gmail.com</small>
-          </div>
-        </div>
+        <div class="profile"><img id="userAvatar" class="avatar" alt="Profile"><div class="profile-copy"><strong id="userName">User</strong><small id="userEmail">user@gmail.com</small></div></div>
         <button id="logoutBtn" class="ghost-btn">Sign out</button>
       </div>
     </header>
 
     <main class="container">
-      <section class="hero-section">
-        <div>
-          <div class="status-pill"><i></i> LIVE CHALLENGE</div>
-          <h2>ITGH Bingo <span>Challenge</span></h2>
-          <p>Selesaikan challenge, upload evidence, dan kumpulkan progress bersama tim.</p>
-        </div>
-        <div class="identity-card glass">
-          <small>LOGGED IN AS</small>
-          <b id="identityEmail">—</b>
-          <span id="identityTeam">Team member</span>
-        </div>
-      </section>
-
-      <section class="selector-row">
-        <div id="bingoSelector" class="segmented"></div>
-        <div class="team-card glass">TEAM <b id="teamName">—</b></div>
-      </section>
-
+      <section class="hero-section"><div><div class="status-pill"><i></i> LIVE CHALLENGE</div><h2>ITGH Bingo <span>Challenge</span></h2><p>Selesaikan challenge, upload evidence, dan kumpulkan progress bersama tim.</p></div><div class="identity-card glass"><small>LOGGED IN AS</small><b id="identityEmail">—</b><span id="identityTeam">Team member</span></div></section>
+      <section class="selector-row"><div id="bingoSelector" class="segmented"></div><div class="team-card glass">TEAM <b id="teamName">—</b></div></section>
       <section id="weekSelector" class="week-grid"></section>
-
-      <section class="progress-card glass">
-        <div class="progress-head">
-          <div><small>OVERALL PROGRESS</small><strong id="progressText">0 / 25</strong></div>
-          <div class="progress-percent" id="progressPct">0%</div>
-        </div>
-        <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
-        <div class="progress-meta"><span id="progressLabel">0 challenge completed</span><span>25 squares</span></div>
-      </section>
-
-      <section class="section-heading">
-        <div><small>ACTIVE BOARD</small><h3 id="boardTitle">BINGO A</h3></div>
-        <span>Click a square to submit activity</span>
-      </section>
-
-      <section class="board-card glass">
-        <div class="board-layout">
-          <div id="boardGrid" class="board-grid"></div>
-          <button id="quizBtn" class="quiz-card">
-            <span class="quiz-glow">?</span>
-            <strong>Quiz ITGH</strong>
-            <small>CLICK TO START</small>
-          </button>
-        </div>
-        <div class="legend">
-          <span><i class="dot orange"></i>Challenge</span>
-          <span><i class="dot red"></i>Team</span>
-          <span><i class="dot blue"></i>Special</span>
-          <span><i class="dot green"></i>Completed</span>
-        </div>
-      </section>
-
-      <section class="record-card glass">
-        <div class="record-head">
-          <div><small>ACTIVITY LOG</small><h3>Challenge Record</h3></div>
-          <span id="recordLabel">Minggu 1 · Bingo A</span>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>#</th><th>Challenge</th><th>Target</th><th>Submitted By</th><th>Date</th><th>Status</th><th>Evidence</th></tr></thead>
-            <tbody id="recordsBody"></tbody>
-          </table>
-        </div>
-      </section>
+      <section class="progress-card glass"><div class="progress-head"><div><small>OVERALL PROGRESS</small><strong id="progressText">0 / 25</strong></div><div class="progress-percent" id="progressPct">0%</div></div><div class="progress-track"><div id="progressFill" class="progress-fill"></div></div><div class="progress-meta"><span id="progressLabel">0 challenge completed</span><span>25 squares</span></div></section>
+      <section class="section-heading"><div><small>ACTIVE BOARD</small><h3 id="boardTitle">BINGO A</h3></div><span>Click a square to submit activity</span></section>
+      <section class="board-card glass"><div class="board-layout"><div id="boardGrid" class="board-grid"></div><button id="quizBtn" class="quiz-card"><span class="quiz-glow">?</span><strong>Quiz ITGH</strong><small>CLICK TO START</small></button></div><div class="legend"><span><i class="dot orange"></i>Challenge</span><span><i class="dot red"></i>Team</span><span><i class="dot blue"></i>Special</span><span><i class="dot green"></i>Completed</span></div></section>
+      <section class="record-card glass"><div class="record-head"><div><small>ACTIVITY LOG</small><h3>Challenge Record</h3></div><span id="recordLabel">Minggu 1 · Bingo A</span></div><div class="table-wrap"><table><thead><tr><th>#</th><th>Challenge</th><th>Target</th><th>Submitted By</th><th>Date</th><th>Status</th><th>Evidence</th></tr></thead><tbody id="recordsBody"></tbody></table></div></section>
     </main>
   </section>
 
-  <!-- CHALLENGE MODAL -->
-  <div id="challengeModal" class="modal-backdrop" hidden>
-    <div class="modal glass">
-      <div class="modal-head">
-        <div class="modal-icon" id="modalIcon">🏃</div>
-        <div><small id="modalCategory">Individual Challenge</small><h3 id="modalTitle">Challenge</h3></div>
-        <button class="close-btn" data-close="challengeModal">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="target-box"><small>TARGET</small><strong id="modalTarget">≥ 3 KM</strong></div>
-        <label>HASIL / ACHIEVEMENT
-          <input id="achievementInput" type="text" placeholder="Contoh: 5 KM / 45 menit / selesai">
-        </label>
-        <label>UPLOAD BUKTI
-          <input id="evidenceInput" type="file" accept="image/*,.pdf">
-        </label>
-        <div id="uploadStatus" class="upload-status"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="ghost-btn" data-close="challengeModal">Cancel</button>
-        <button id="submitChallengeBtn" class="primary-btn">Submit Challenge</button>
-      </div>
-    </div>
-  </div>
+  <div id="challengeModal" class="modal-backdrop" hidden><div class="modal glass"><div class="modal-head"><div class="modal-icon" id="modalIcon">🏃</div><div><small id="modalCategory">Individual Challenge</small><h3 id="modalTitle">Challenge</h3></div><button class="close-btn" data-close="challengeModal">×</button></div><div class="modal-body"><div class="target-box"><small>TARGET</small><strong id="modalTarget">≥ 3 KM</strong></div><label>HASIL / ACHIEVEMENT<input id="achievementInput" type="text" placeholder="Contoh: 5 KM / 45 menit / selesai"></label><label>UPLOAD BUKTI<input id="evidenceInput" type="file" accept="image/*,.pdf"></label><div id="uploadStatus" class="upload-status"></div></div><div class="modal-footer"><button class="ghost-btn" data-close="challengeModal">Cancel</button><button id="submitChallengeBtn" class="primary-btn">Submit Challenge</button></div></div></div>
 
-  <!-- QUIZ MODAL -->
-  <div id="quizModal" class="modal-backdrop" hidden>
-    <div class="modal glass">
-      <div class="modal-head">
-        <div class="modal-icon">💡</div>
-        <div><small>KNOWLEDGE CHALLENGE</small><h3>Quiz ITGH</h3></div>
-        <button class="close-btn" data-close="quizModal">×</button>
-      </div>
-      <div class="modal-body">
-        <label>1. Aktivitas kardio?
-          <select id="q1"><option value="">Pilih</option><option value="y">Lari</option><option value="n">Tidur</option></select>
-        </label>
-        <label>2. Apa yang penting setelah olahraga?
-          <select id="q2"><option value="">Pilih</option><option value="y">Hidrasi</option><option value="n">Tidak minum</option></select>
-        </label>
-        <label>3. Target tidur orang dewasa?
-          <select id="q3"><option value="">Pilih</option><option value="y">7–9 jam</option><option value="n">2 jam</option></select>
-        </label>
-      </div>
-      <div class="modal-footer">
-        <button class="ghost-btn" data-close="quizModal">Cancel</button>
-        <button id="submitQuizBtn" class="primary-btn">Submit Quiz</button>
-      </div>
-    </div>
-  </div>
+  <div id="quizModal" class="modal-backdrop" hidden><div class="modal glass"><div class="modal-head"><div class="modal-icon">💡</div><div><small>KNOWLEDGE CHALLENGE</small><h3>Quiz ITGH</h3></div><button class="close-btn" data-close="quizModal">×</button></div><div class="modal-body"><label>1. Aktivitas kardio?<select id="q1"><option value="">Pilih</option><option value="y">Lari</option><option value="n">Tidur</option></select></label><label>2. Apa yang penting setelah olahraga?<select id="q2"><option value="">Pilih</option><option value="y">Hidrasi</option><option value="n">Tidak minum</option></select></label><label>3. Target tidur orang dewasa?<select id="q3"><option value="">Pilih</option><option value="y">7–9 jam</option><option value="n">2 jam</option></select></label></div><div class="modal-footer"><button class="ghost-btn" data-close="quizModal">Cancel</button><button id="submitQuizBtn" class="primary-btn">Submit Quiz</button></div></div></div>
 
   <div id="toast" class="toast" hidden></div>
-
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script type="module" src="./js/achievements.js"></script>
   <script type="module" src="./js/app.js"></script>
 </body>
 </html>
