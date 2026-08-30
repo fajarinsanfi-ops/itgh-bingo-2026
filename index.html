@@ -24,7 +24,6 @@
       <h1>Welcome to<br><span>ITGH BINGO</span></h1>
       <p class="login-copy">Login dengan akun Google masing-masing personel untuk menyimpan challenge, progress, quiz, dan evidence.</p>
 
-      <!-- GIS renders the official Google identity button here -->
       <div id="googleButton" class="google-button-wrap"></div>
 
       <div id="loginError" class="error-message" hidden></div>
@@ -41,6 +40,7 @@
       </a>
 
       <div class="top-actions">
+        <a class="ghost-btn nav-btn" href="./stats.html">📊 Statistics</a>
         <button id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">☾</button>
         <div class="profile">
           <img id="userAvatar" class="avatar" alt="Profile">
@@ -173,10 +173,7 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-
-  <!-- Firebase -->
   <script type="module" src="./js/app.js"></script>
 </body>
 </html>
