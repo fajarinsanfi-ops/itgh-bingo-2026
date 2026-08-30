@@ -1,6 +1,4 @@
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-import { auth } from "./auth.js";
 import { db } from "./db.js";
 
 const BADGES = [
@@ -16,7 +14,7 @@ const BADGES = [
 
 let unsubscribe = null;
 let lastRows = [];
-let observer = null;
+let initialized = false;
 
 function $(id) { return document.getElementById(id); }
 
@@ -37,13 +35,20 @@ function buildStats(rows) {
 
 function ensurePanel() {
   if ($("achievementPanel")) return $("achievementPanel");
+
   const progress = document.querySelector(".progress-card");
   if (!progress) return null;
 
   const panel = document.createElement("section");
   panel.id = "achievementPanel";
   panel.className = "achievement-panel glass";
-  panel.innerHTML = `<div class="achievement-head"><div><small>ACHIEVEMENT CENTER</small><h3>Badges & Milestones</h3></div><div class="achievement-score"><strong id="achievementUnlocked">0</strong><span id="achievementTotal">/ ${BADGES.length} unlocked</span></div></div><div id="achievementGrid" class="achievement-grid"></div>`;
+  panel.innerHTML = `
+    <div class="achievement-head">
+      <div><small>ACHIEVEMENT CENTER</small><h3>Badges & Milestones</h3></div>
+      <div class="achievement-score"><strong id="achievementUnlocked">0</strong><span id="achievementTotal">/ ${BADGES.length} unlocked</span></div>
+    </div>
+    <div id="achievementGrid" class="achievement-grid"></div>
+  `;
   progress.insertAdjacentElement("afterend", panel);
   return panel;
 }
@@ -64,28 +69,30 @@ function render(rows) {
   }).join("");
 }
 
-function watchForAppPage() {
-  observer?.disconnect();
-  observer = new MutationObserver(() => {
-    const appPage = $("appPage");
-    // Only react when the app page becomes available; never react to
-    // mutations caused by render() itself.
-    if (appPage && !appPage.hidden && !$("achievementPanel")) render(lastRows);
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-}
+export function initAchievements(user) {
+  if (!user?.uid) return;
 
-function start(user) {
+  // Safe to call repeatedly from app.js; only one Firestore listener is kept.
+  if (initialized && unsubscribe) return;
+  initialized = true;
+
   unsubscribe?.();
-  unsubscribe = null;
-  if (!user) { lastRows = []; return; }
-
   const q = query(collection(db, "submissions"), where("userId", "==", user.uid));
+
   unsubscribe = onSnapshot(q, snapshot => {
     lastRows = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     render(lastRows);
-  }, error => console.error("Achievement listener error:", error));
+  }, error => {
+    console.error("Achievement listener error:", error);
+  });
+
+  render(lastRows);
 }
 
-onAuthStateChanged(auth, start);
-watchForAppPage();
+export function resetAchievements() {
+  unsubscribe?.();
+  unsubscribe = null;
+  lastRows = [];
+  initialized = false;
+  $("achievementPanel")?.remove();
+}
