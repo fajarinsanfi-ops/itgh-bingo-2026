@@ -8,11 +8,13 @@ service cloud.firestore {
     }
 
     match /submissions/{submissionId} {
+      // Participants need to read all submission records for the
+      // authenticated leaderboard/statistics page. The UI does not
+      // display user email addresses in the leaderboard.
+      allow read: if request.auth != null;
+
       allow create: if request.auth != null
         && request.resource.data.userId == request.auth.uid;
-
-      allow read: if request.auth != null
-        && resource.data.userId == request.auth.uid;
 
       allow update: if request.auth != null
         && resource.data.userId == request.auth.uid
