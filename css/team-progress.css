@@ -1,0 +1,8 @@
+.cell.team-done{position:relative;overflow:hidden;box-shadow:0 0 0 2px rgba(34,211,238,.55),0 0 22px rgba(34,211,238,.12)}
+.cell.team-done:not(.done){filter:saturate(.9)}
+.team-owner{position:absolute;left:7px;right:7px;bottom:7px;padding:4px 7px;border-radius:999px;background:rgba(4,12,24,.84);border:1px solid rgba(255,255,255,.16);font:700 9px/1 Inter,sans-serif;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;backdrop-filter:blur(8px);pointer-events:none;animation:teamOwnerIn .28s ease-out}
+.cell.done .team-owner{background:rgba(16,185,129,.9);border-color:rgba(255,255,255,.25)}
+.me-tag{display:inline-block;margin-left:4px;padding:2px 5px;border-radius:999px;background:#22c55e;color:#04110a;font-size:8px;font-weight:800}
+.team-record-row.is-me{background:rgba(34,211,238,.045)}
+@keyframes teamOwnerIn{from{opacity:0;transform:translateY(5px) scale(.96)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.team-owner{animation:none}}
