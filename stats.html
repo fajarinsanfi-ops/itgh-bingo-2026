@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/styles.css">
   <link rel="stylesheet" href="./css/stats.css">
+  <link rel="stylesheet" href="./css/podium.css">
 </head>
 <body>
   <div class="ambient ambient-a"></div>
@@ -27,55 +28,23 @@
         <span class="brand-icon">✦</span>
         <span><b>HEALTH CHALLENGE</b><small>ITGH · 2026</small></span>
       </a>
-
       <div class="top-actions">
         <a class="ghost-btn nav-btn" href="./index.html">← Bingo</a>
         <button id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">☾</button>
-        <div class="profile">
-          <img id="userAvatar" class="avatar" alt="Profile">
-          <div class="profile-copy">
-            <strong id="userName">User</strong>
-            <small id="userEmail">user@gmail.com</small>
-          </div>
-        </div>
+        <div class="profile"><img id="userAvatar" class="avatar" alt="Profile"><div class="profile-copy"><strong id="userName">User</strong><small id="userEmail">user@gmail.com</small></div></div>
         <button id="logoutBtn" class="ghost-btn">Sign out</button>
       </div>
     </header>
 
     <main class="container stats-container">
       <section class="stats-hero">
-        <div>
-          <div class="status-pill"><i></i> LIVE STATISTICS</div>
-          <h1>Performance <span>Center</span></h1>
-          <p>Statistik submission, progress, poin, dan leaderboard ITGH Health Challenge 2026.</p>
-        </div>
-        <div class="stats-user glass">
-          <small>YOUR RANK</small>
-          <strong id="myRank">—</strong>
-          <span id="myRankMeta">Menunggu data</span>
-        </div>
+        <div><div class="status-pill"><i></i> LIVE STATISTICS</div><h1>Performance <span>Center</span></h1><p>Statistik submission, progress, poin, dan leaderboard ITGH Health Challenge 2026.</p></div>
+        <div class="stats-user glass"><small>YOUR RANK</small><strong id="myRank">—</strong><span id="myRankMeta">Menunggu data</span></div>
       </section>
 
       <section class="filter-bar glass">
-        <div class="filter-group">
-          <label>BINGO</label>
-          <select id="bingoFilter">
-            <option value="ALL">All Bingo</option>
-            <option value="A">Bingo A</option>
-            <option value="B">Bingo B</option>
-            <option value="C">Bingo C</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label>WEEK</label>
-          <select id="weekFilter">
-            <option value="ALL">All Weeks</option>
-            <option value="1">Week 1</option>
-            <option value="2">Week 2</option>
-            <option value="3">Week 3</option>
-            <option value="4">Week 4</option>
-          </select>
-        </div>
+        <div class="filter-group"><label>BINGO</label><select id="bingoFilter"><option value="ALL">All Bingo</option><option value="A">Bingo A</option><option value="B">Bingo B</option><option value="C">Bingo C</option></select></div>
+        <div class="filter-group"><label>WEEK</label><select id="weekFilter"><option value="ALL">All Weeks</option><option value="1">Week 1</option><option value="2">Week 2</option><option value="3">Week 3</option><option value="4">Week 4</option></select></div>
         <div class="filter-info" id="filterInfo">All submissions</div>
       </section>
 
@@ -94,26 +63,14 @@
 
         <article class="panel glass">
           <div class="panel-head"><div><small>YOUR PERFORMANCE</small><h2 id="personalName">Your Statistics</h2></div><span id="personalContext">All time</span></div>
-          <div class="personal-summary">
-            <div><strong id="personalSubmissions">0</strong><span>Submissions</span></div>
-            <div><strong id="personalActivities">0</strong><span>Activities</span></div>
-            <div><strong id="personalPoints">0</strong><span>Points</span></div>
-          </div>
-          <div class="mini-title">BINGO PROGRESS</div>
-          <div id="bingoBreakdown" class="breakdown-list"></div>
+          <div class="personal-summary"><div><strong id="personalSubmissions">0</strong><span>Submissions</span></div><div><strong id="personalActivities">0</strong><span>Activities</span></div><div><strong id="personalPoints">0</strong><span>Points</span></div></div>
+          <div class="mini-title">BINGO PROGRESS</div><div id="bingoBreakdown" class="breakdown-list"></div>
         </article>
       </section>
 
       <section class="panel glass submitter-panel">
         <div class="panel-head"><div><small>PARTICIPANT ANALYTICS</small><h2>Submitter Statistics</h2></div><span id="participantCount">0 participants</span></div>
-        <div class="table-wrap">
-          <table class="stats-table">
-            <thead>
-              <tr><th>#</th><th>Submitter</th><th>Activities</th><th>Points</th><th>Bingo A</th><th>Bingo B</th><th>Bingo C</th><th>Weeks Active</th><th>Last Activity</th></tr>
-            </thead>
-            <tbody id="submitterBody"></tbody>
-          </table>
-        </div>
+        <div class="table-wrap"><table class="stats-table"><thead><tr><th>#</th><th>Submitter</th><th>Activities</th><th>Points</th><th>Bingo A</th><th>Bingo B</th><th>Bingo C</th><th>Weeks Active</th><th>Last Activity</th></tr></thead><tbody id="submitterBody"></tbody></table></div>
       </section>
 
       <section class="panel glass recent-panel">
@@ -124,7 +81,7 @@
   </section>
 
   <div id="statsError" class="stats-error" hidden></div>
-
   <script type="module" src="./js/stats.js"></script>
+  <script type="module" src="./js/podium.js"></script>
 </body>
 </html>
