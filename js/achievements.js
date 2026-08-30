@@ -1,4 +1,6 @@
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { auth } from "./auth.js";
 import { db } from "./db.js";
 
 const BADGES = [
@@ -14,7 +16,7 @@ const BADGES = [
 
 let unsubscribe = null;
 let lastRows = [];
-let initialized = false;
+let renderTimer = null;
 
 function $(id) { return document.getElementById(id); }
 
@@ -35,7 +37,6 @@ function buildStats(rows) {
 
 function ensurePanel() {
   if ($("achievementPanel")) return $("achievementPanel");
-
   const progress = document.querySelector(".progress-card");
   if (!progress) return null;
 
@@ -55,9 +56,9 @@ function ensurePanel() {
 
 function render(rows) {
   const panel = ensurePanel();
-  if (!panel) return;
+  if (!panel) return false;
   const grid = $("achievementGrid");
-  if (!grid) return;
+  if (!grid) return false;
 
   const stats = buildStats(rows);
   const unlocked = BADGES.filter(badge => badge.check(stats));
@@ -67,32 +68,51 @@ function render(rows) {
     const isUnlocked = badge.check(stats);
     return `<article class="achievement-badge ${isUnlocked ? "unlocked" : "locked"}"><div class="badge-icon">${badge.icon}</div><div class="badge-copy"><strong>${escapeHtml(badge.name)}</strong><span>${escapeHtml(badge.description)}</span><small>${escapeHtml(badge.progress(stats))}</small></div><div class="badge-state">${isUnlocked ? "✓" : "🔒"}</div></article>`;
   }).join("");
+  return true;
 }
 
-export function initAchievements(user) {
-  if (!user?.uid) return;
-
-  // Safe to call repeatedly from app.js; only one Firestore listener is kept.
-  if (initialized && unsubscribe) return;
-  initialized = true;
-
-  unsubscribe?.();
-  const q = query(collection(db, "submissions"), where("userId", "==", user.uid));
-
-  unsubscribe = onSnapshot(q, snapshot => {
-    lastRows = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    render(lastRows);
-  }, error => {
-    console.error("Achievement listener error:", error);
-  });
-
-  render(lastRows);
+function waitForAppAndRender() {
+  if (render(lastRows)) {
+    if (renderTimer) {
+      clearInterval(renderTimer);
+      renderTimer = null;
+    }
+  }
 }
 
-export function resetAchievements() {
+function start(user) {
   unsubscribe?.();
   unsubscribe = null;
   lastRows = [];
-  initialized = false;
-  $("achievementPanel")?.remove();
+  if (renderTimer) {
+    clearInterval(renderTimer);
+    renderTimer = null;
+  }
+
+  if (!user) {
+    $("achievementPanel")?.remove();
+    return;
+  }
+
+  const q = query(collection(db, "submissions"), where("userId", "==", user.uid));
+  unsubscribe = onSnapshot(q, snapshot => {
+    lastRows = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    render(lastRows);
+  }, error => console.error("Achievement listener error:", error));
+
+  // app.js controls when #appPage becomes visible. Poll briefly instead of
+  // observing the whole document, so achievement rendering can never create
+  // a MutationObserver feedback loop or freeze the browser.
+  waitForAppAndRender();
+  if (!$("achievementPanel")) {
+    renderTimer = setInterval(waitForAppAndRender, 250);
+    setTimeout(() => {
+      if (renderTimer) {
+        clearInterval(renderTimer);
+        renderTimer = null;
+      }
+    }, 15000);
+  }
 }
+
+onAuthStateChanged(auth, start);
