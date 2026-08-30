@@ -1,6 +1,6 @@
 # ITGH Bingo 2026 — Health Challenge
 
-Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Firebase, Bingo A/B/C, challenge submission, evidence, progress, statistics, dan leaderboard.
+Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Firebase, Bingo A/B/C, challenge submission, evidence, progress, **Achievement & Badge**, statistics, dan leaderboard.
 
 ## 🌐 Live App
 
@@ -17,8 +17,32 @@ Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Fire
 - Submission disimpan persisten di Cloud Firestore.
 - Light / Dark mode.
 - Futuristic responsive UI dan animasi.
+- **Achievement & Badge Center** dengan milestone personal.
 - Statistics dashboard dan leaderboard.
 - Duplicate submission dicegah untuk kombinasi user + Bingo + Week + Activity yang sama.
+
+## 🏅 Achievement & Badge System
+
+Setiap personel memiliki Achievement Center pada halaman utama. Badge dihitung dari seluruh submission milik user sehingga tidak terikat pada Bingo/Week yang sedang dipilih.
+
+Badge yang tersedia:
+
+| Badge | Syarat |
+|---|---|
+| 🏃 First Step | 1 aktivitas selesai |
+| ⚡ Getting Active | 5 aktivitas selesai |
+| 🔥 On Fire | 10 aktivitas selesai |
+| 💎 25 Strong | 25 aktivitas selesai |
+| 🧭 Bingo Explorer | Berpartisipasi di Bingo A, B, dan C |
+| 📅 Week Warrior | Aktif pada Week 1, 2, 3, dan 4 |
+| 📸 Evidence Hero | 5 aktivitas dengan evidence |
+| 🧠 Quiz Master | 3 Quiz ITGH selesai |
+
+Badge yang belum tercapai tetap ditampilkan sebagai **locked** dengan progress menuju milestone.
+
+Achievement dihitung dari data Firestore secara real-time sehingga badge akan berubah setelah submission berhasil tersimpan.
+
+> Achievement & Badge adalah tahap gamification pertama. **Streak, Bingo Winning System, dan Podium Leaderboard** akan dikembangkan sebagai tahap berikutnya agar logika masing-masing fitur tetap terpisah dan mudah dipelihara.
 
 ## 🎯 Bingo & Week Context
 
@@ -53,6 +77,7 @@ Setelah berhasil disimpan:
 3. Form di-reset.
 4. Challenge menjadi completed.
 5. Progress dan activity log diperbarui.
+6. Achievement Center menerima data submission terbaru.
 
 Jika save/upload gagal, modal tetap terbuka agar input tidak hilang.
 
@@ -127,13 +152,15 @@ itgh-bingo-2026/
 │
 ├── css/
 │   ├── styles.css             # Main application styles
-│   └── stats.css              # Statistics page styles
+│   ├── stats.css              # Statistics page styles
+│   └── achievements.css       # Achievement & badge styles
 │
 └── js/
     ├── app.js                 # Main application logic
     ├── auth.js                # Google/Firebase authentication
     ├── db.js                  # Firestore & Storage data layer
     ├── stats.js               # Statistics & leaderboard logic
+    ├── achievements.js        # Achievement & badge logic
     ├── firebase-config.js      # Firebase Web configuration
     │
     └── data/
@@ -178,7 +205,7 @@ Firebase Console
 → Publish
 ```
 
-Statistics/leaderboard membutuhkan authenticated user dapat membaca submission yang diperlukan untuk perhitungan ranking.
+Statistics/leaderboard membutuhkan authenticated user dapat membaca submission yang diperlukan untuk perhitungan ranking. Achievement Center hanya membutuhkan submission milik user yang sedang login.
 
 ## 🔑 Google OAuth / GIS
 
@@ -291,6 +318,7 @@ Gunakan path relatif dan perhatikan huruf besar/kecil:
 
 ```html
 <link rel="stylesheet" href="./css/styles.css">
+<link rel="stylesheet" href="./css/achievements.css">
 ```
 
 Struktur harus sesuai:
@@ -298,7 +326,9 @@ Struktur harus sesuai:
 ```text
 index.html
 css/styles.css
+css/achievements.css
 js/app.js
+js/achievements.js
 ```
 
 ## 🔒 Security Notes
@@ -320,12 +350,12 @@ Firebase Authentication
       ▼
 Authenticated User
       │
-      ├───────────────┐
-      ▼               ▼
- BINGO A/B/C      Statistics
-      │               │
-      ▼               ▼
-  Week 1–4        Leaderboard
+      ├───────────────┬────────────────┐
+      ▼               ▼                ▼
+ BINGO A/B/C      Statistics      Achievements
+      │               │                │
+      ▼               ▼                ▼
+  Week 1–4       Leaderboard       Badge System
       │
       ▼
    Activity
@@ -336,6 +366,25 @@ Authenticated User
       ▼
 Firestore + Storage
 ```
+
+## 🧭 Gamification Roadmap
+
+```text
+PHASE 1
+✅ Achievement & Badge
+
+PHASE 2
+⬜ Streak System
+⬜ Bingo Winning System
+
+PHASE 3
+⬜ Podium Leaderboard
+
+PHASE 4
+⬜ Admin Dashboard
+```
+
+Admin Dashboard sengaja ditunda sampai jumlah participant/team berkembang sehingga arsitektur admin dapat dibuat berdasarkan kebutuhan operasional yang lebih nyata.
 
 ## 📄 License
 
