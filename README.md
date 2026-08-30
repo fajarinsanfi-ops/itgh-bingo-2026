@@ -1,165 +1,342 @@
-# ITGH Bingo 2026 — GIS + Firebase + Google Sites
+# ITGH Bingo 2026 — Health Challenge
 
-Project ini merombak prototype `index(3).html` menjadi struktur yang lebih rapi:
+Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Firebase, Bingo A/B/C, challenge submission, evidence, progress, statistics, dan leaderboard.
+
+## 🌐 Live App
+
+- Main App: https://fajarinsanfi-ops.github.io/itgh-bingo-2026/
+- Statistics & Leaderboard: https://fajarinsanfi-ops.github.io/itgh-bingo-2026/stats.html
+
+## ✨ Features
+
+- Google Identity Services (GIS) + Firebase Authentication.
+- Setiap personel bebas memilih **BINGO A, BINGO B, atau BINGO C**.
+- Progress terpisah untuk **Week 1–4**.
+- Challenge submission dengan achievement dan evidence.
+- Evidence disimpan di Firebase Storage.
+- Submission disimpan persisten di Cloud Firestore.
+- Light / Dark mode.
+- Futuristic responsive UI dan animasi.
+- Statistics dashboard dan leaderboard.
+- Duplicate submission dicegah untuk kombinasi user + Bingo + Week + Activity yang sama.
+
+## 🎯 Bingo & Week Context
+
+Setiap aktivitas memiliki konteks unik:
+
+```text
+Google User + Bingo + Week + Activity
+```
+
+Contoh:
+
+```text
+BINGO A + Week 1 + Activity #1
+BINGO A + Week 2 + Activity #1
+BINGO B + Week 1 + Activity #1
+BINGO C + Week 4 + Activity #1
+```
+
+Keempatnya merupakan submission yang berbeda. Progress pada satu Bingo/Week tidak boleh terbawa ke Bingo atau Week lain.
+
+## 📝 Challenge Submission
+
+User dapat memilih challenge lalu mengisi:
+
+- Hasil / achievement
+- Evidence file (opsional sesuai challenge/form)
+
+Setelah berhasil disimpan:
+
+1. Submission masuk ke Firestore.
+2. Modal challenge ditutup.
+3. Form di-reset.
+4. Challenge menjadi completed.
+5. Progress dan activity log diperbarui.
+
+Jika save/upload gagal, modal tetap terbuka agar input tidak hilang.
+
+## 💾 Firestore Persistence
+
+Collection utama:
+
+```text
+users/{userId}
+submissions/{submissionId}
+```
+
+Submission baru menggunakan deterministic document ID berdasarkan:
+
+```text
+{userId}_B{variant}_W{week}_C{challengeIndex}
+```
+
+Contoh:
+
+```text
+UID_BA_W1_C0
+UID_BA_W1_C4
+UID_BB_W3_C21
+UID_BC_W4_C21
+```
+
+Hal ini memisahkan data antar user, Bingo, Week, dan Activity sekaligus mencegah duplicate submission untuk konteks yang sama.
+
+## 📊 Statistics & Leaderboard
+
+Dashboard tersedia di:
+
+```text
+https://fajarinsanfi-ops.github.io/itgh-bingo-2026/stats.html
+```
+
+Menampilkan:
+
+- Total Submitters
+- Total Submissions
+- Completed Activities
+- Total Points
+- Your Rank
+- Your Statistics
+- Progress BINGO A/B/C
+- Top Performers
+- Submitter Statistics
+- Recent Submissions
+
+Filter:
+
+- All Bingo / Bingo A / Bingo B / Bingo C
+- All Weeks / Week 1 / Week 2 / Week 3 / Week 4
+
+Ranking memprioritaskan:
+
+1. Total Points
+2. Completed Activities
+3. Total Submissions
+
+## 🗂️ Project Structure
 
 ```text
 itgh-bingo-2026/
-├── index.html
+│
+├── index.html                 # Main application
+├── stats.html                 # Statistics & leaderboard
+├── README.md
+├── firestore.rules            # Firestore security rules
+├── storage.rules              # Firebase Storage security rules
+│
 ├── css/
-│   └── styles.css
-├── js/
-│   ├── app.js
-│   ├── auth.js
-│   ├── db.js
-│   ├── firebase-config.js
-│   └── data/
-│       └── boards.js
-├── firestore.rules
-├── storage.rules
-└── README.md
+│   ├── styles.css             # Main application styles
+│   └── stats.css              # Statistics page styles
+│
+└── js/
+    ├── app.js                 # Main application logic
+    ├── auth.js                # Google/Firebase authentication
+    ├── db.js                  # Firestore & Storage data layer
+    ├── stats.js               # Statistics & leaderboard logic
+    ├── firebase-config.js      # Firebase Web configuration
+    │
+    └── data/
+        └── boards.js           # Bingo board and challenge data
 ```
 
-## 1. Yang sudah dibuat
+## 🔥 Firebase Setup
 
-- Google Identity Services (GIS) untuk tombol **Continue with Google**.
-- Firebase Authentication untuk session login.
-- Bisa login menggunakan akun Google/Gmail yang diizinkan oleh konfigurasi project.
-- Firebase Firestore untuk menyimpan submission secara persisten.
-- Firebase Storage untuk menyimpan file evidence.
-- Data terikat ke `user.uid`, sehingga submission tidak tercampur antar personel.
-- Board A, B, C dipisahkan di `js/data/boards.js` dan seluruh 25 kotak dari prototype dipertahankan.
-- Light / Dark mode.
-- Animasi futuristik, glow, grid, floating ambient, progress animation.
-- Responsive untuk desktop/mobile.
-- File HTML, CSS, JS dipisah.
-- Duplicate submission untuk square yang sama pada board/week yang sama dicegah di sisi UI.
+Project menggunakan:
 
-## 2. Firebase setup
+- Firebase Authentication
+- Google Authentication Provider
+- Cloud Firestore
+- Firebase Storage
 
-1. Buka Firebase Console.
-2. Create project.
-3. Add Web App.
-4. Copy Firebase Web App configuration ke:
-   `js/firebase-config.js`
-5. Authentication -> Sign-in method -> enable **Google**.
-6. Firestore Database -> Create database.
-7. Storage -> Get started.
-8. Deploy rules:
-   - `firestore.rules`
-   - `storage.rules`
+### Authentication
 
-## 3. Google Cloud OAuth / GIS
+Enable Google pada:
+
+```text
+Firebase Console
+→ Authentication
+→ Sign-in providers
+→ Google
+```
+
+### Firestore
+
+Gunakan database Firestore yang sudah ada pada project. **Tidak perlu membuat database kedua dengan database ID yang sama.**
+
+### Rules
+
+`firestore.rules` di repository adalah source file untuk rules, tetapi perubahan di GitHub **tidak otomatis dipublish ke Firebase**.
+
+Setelah rules berubah:
+
+```text
+Firebase Console
+→ Firestore Database
+→ Rules
+→ Paste/verify rules
+→ Publish
+```
+
+Statistics/leaderboard membutuhkan authenticated user dapat membaca submission yang diperlukan untuk perhitungan ranking.
+
+## 🔑 Google OAuth / GIS
 
 Buat OAuth 2.0 Client ID tipe **Web application**.
 
-Authorized JavaScript origins harus berisi domain tempat aplikasi ini di-host.
+Production Authorized JavaScript origin:
 
-Contoh jika GitHub Pages:
 ```text
-https://USERNAME.github.io
+https://fajarinsanfi-ops.github.io
 ```
 
-Contoh jika custom domain:
+Local development:
+
 ```text
-https://healthchallenge.example.com
+http://localhost:5500
+http://127.0.0.1:5500
 ```
 
-Masukkan Client ID ke:
-```js
-export const GOOGLE_CLIENT_ID =
-  "1234567890-xxxxxxxx.apps.googleusercontent.com";
-```
+Client ID digunakan di `js/firebase-config.js`/konfigurasi auth sesuai implementasi aplikasi.
 
-Jangan memasukkan secret client ke frontend. Web Client ID memang boleh berada di frontend.
+> **Jangan pernah menaruh OAuth Client Secret, service account JSON, private key, atau Firebase Admin credentials di frontend/repository.**
 
-## 4. Hosting
+Web Client ID sendiri bukan secret dan memang dapat digunakan di frontend.
 
-Pilihan paling sederhana:
+## 🚀 GitHub Pages Deployment
 
-### GitHub Pages
+Repository menggunakan GitHub Pages.
 
-Upload seluruh folder ke repository, lalu:
-Settings -> Pages -> Deploy from branch.
+Pastikan Pages menggunakan branch:
 
-URL misalnya:
 ```text
-https://username.github.io/itgh-bingo-2026/
+main
 ```
 
-Tambahkan origin tersebut ke Google Cloud OAuth Client.
+Setelah commit:
 
-### Firebase Hosting
+1. Tunggu GitHub Pages selesai deploy.
+2. Buka URL production.
+3. Gunakan hard refresh (`Ctrl + Shift + R`) bila browser masih menyimpan asset lama.
 
-Alternatif yang lebih cocok jika seluruh backend juga Firebase:
-```bash
-firebase init hosting
-firebase deploy
+## 🌐 Google Sites Embed
+
+Main app:
+
+```text
+https://fajarinsanfi-ops.github.io/itgh-bingo-2026/
 ```
 
-## 5. Embed ke Google Sites
+Statistics:
 
-Google Sites dapat meng-embed halaman website melalui URL.
+```text
+https://fajarinsanfi-ops.github.io/itgh-bingo-2026/stats.html
+```
 
 Di Google Sites:
-`Insert -> Embed -> By URL`
 
-Masukkan URL hosting aplikasi, misalnya:
 ```text
-https://username.github.io/itgh-bingo-2026/
+Insert → Embed → By URL
 ```
 
-Atur ukuran frame sesuai kebutuhan.
+Masukkan URL GitHub Pages di atas.
 
-## 6. Penting tentang login
+Aplikasi tetap menjalankan authentication, Firestore, Storage, dan application logic dari hosting/Firebase; Google Sites berfungsi sebagai container/embed.
 
-Jangan memakai tombol login palsu seperti prototype lama:
+## 🖥️ Local Development
 
-```js
-function login(){
-  // prototype
-}
+Karena menggunakan ES Modules, jalankan melalui web server. Jangan membuka `index.html` langsung melalui `file://`.
+
+Contoh VS Code Live Server:
+
+```text
+http://localhost:5500/
 ```
 
-Versi ini menggunakan:
-GIS -> Google credential -> Firebase Authentication -> Firestore.
+Pastikan origin lokal tersebut sudah terdaftar pada Google OAuth jika login Google diuji secara lokal.
 
-Dengan demikian identitas personel benar-benar berasal dari akun Google yang login.
+## 🛠️ Troubleshooting
 
-## 7. Untuk akun Gmail apa pun
+### `401 invalid_client`
 
-Jika ingin semua Google Account/Gmail dapat login:
-- OAuth consent / app configuration jangan dibatasi hanya organisasi internal.
-- Firebase Authentication Google provider harus aktif.
-- Pastikan domain hosting masuk Authorized JavaScript origins.
+Periksa:
 
-Jika ini aplikasi internal perusahaan dan hanya akun Google Workspace perusahaan yang boleh masuk, tambahkan pembatasan domain/email di layer aplikasi dan rules/backend.
+- OAuth Client ID adalah Web Client ID.
+- Client ID tidak salah ketik.
+- Authorized JavaScript origins sesuai domain yang sedang dibuka.
+- Domain production menggunakan HTTPS.
+- Jangan menggunakan Client Secret sebagai Client ID.
 
-## 8. Catatan keamanan
+### Firestore `permission-denied`
 
-Client-side Firebase config bukan password/secret. Namun Firestore dan Storage Rules wajib dipasang.
+Periksa rules yang **aktif di Firebase Console**, bukan hanya file `firestore.rules` di GitHub.
 
-Jangan pernah menaruh:
-- service account JSON
-- private key
-- OAuth client secret
+Jika Statistics membaca seluruh `submissions`, authenticated user harus memiliki permission read yang sesuai untuk kebutuhan leaderboard.
 
-di repository frontend.
+Setelah memperbarui rules di Firebase Console, klik **Publish**.
 
-## 9. Deploy checklist
+### Data hilang setelah reload
 
-Sebelum production:
+Periksa:
 
-- [ ] Firebase Auth Google enabled
-- [ ] Firestore created
-- [ ] Storage created
-- [ ] Firestore rules deployed
-- [ ] Storage rules deployed
-- [ ] OAuth Web Client created
-- [ ] Authorized JavaScript origins configured
-- [ ] Firebase config filled
-- [ ] GOOGLE_CLIENT_ID filled
-- [ ] App hosted on HTTPS
-- [ ] Hosted URL added to Firebase Authorized Domains
-- [ ] URL tested directly before embedding in Google Sites
-- [ ] Google Sites embeds the hosted URL
+- User sudah login.
+- Firestore database sudah dibuat.
+- Collection `submissions` berisi dokumen.
+- Firestore Rules mengizinkan read untuk user yang sesuai.
+- Browser tidak sedang menggunakan versi JavaScript lama; lakukan hard refresh.
 
+### CSS tidak terbaca
+
+Gunakan path relatif dan perhatikan huruf besar/kecil:
+
+```html
+<link rel="stylesheet" href="./css/styles.css">
+```
+
+Struktur harus sesuai:
+
+```text
+index.html
+css/styles.css
+js/app.js
+```
+
+## 🔒 Security Notes
+
+- Firebase Web configuration bukan password, tetapi Security Rules wajib dikonfigurasi dengan benar.
+- Jangan commit OAuth Client Secret atau service account credentials.
+- Submission create/update/delete harus dibatasi berdasarkan authenticated Firebase UID.
+- Evidence Storage harus dibatasi berdasarkan user path.
+- Jika leaderboard production perlu privacy lebih ketat, pertimbangkan membuat statistik agregat melalui backend/Cloud Functions sehingga browser tidak perlu membaca seluruh submission mentah.
+
+## 📌 Application Flow
+
+```text
+Google Sign-In
+      │
+      ▼
+Firebase Authentication
+      │
+      ▼
+Authenticated User
+      │
+      ├───────────────┐
+      ▼               ▼
+ BINGO A/B/C      Statistics
+      │               │
+      ▼               ▼
+  Week 1–4        Leaderboard
+      │
+      ▼
+   Activity
+      │
+      ├── Achievement
+      └── Evidence
+      │
+      ▼
+Firestore + Storage
+```
+
+## 📄 License
+
+Internal ITGH Health Challenge 2026 project.
