@@ -1,0 +1,16 @@
+.quiz-status-intro{display:flex;gap:12px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:14px;background:rgba(50,216,255,.05)}
+.quiz-status-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:var(--cyan);font-size:22px;background:rgba(50,216,255,.1);box-shadow:0 0 24px rgba(50,216,255,.08)}
+.quiz-status-intro strong{display:block;font-size:13px}.quiz-status-intro p{margin:4px 0 0;color:var(--muted);font-size:9px;line-height:1.5}
+.quiz-status-options{border:0;padding:0;margin:18px 0 0}.quiz-status-options legend{font:700 8px Orbitron,sans-serif;letter-spacing:1.5px;color:var(--muted);margin-bottom:9px}
+.quiz-radio-option{position:relative;display:flex!important;align-items:center;gap:11px;padding:13px!important;margin:8px 0!important;border:1px solid var(--line);border-radius:12px;background:rgba(120,150,180,.045);cursor:pointer;transition:.2s}
+.quiz-radio-option:hover{border-color:rgba(50,216,255,.38);transform:translateY(-1px)}
+.quiz-radio-option input{position:absolute!important;opacity:0!important;width:1px!important;height:1px!important;pointer-events:none}
+.quiz-radio-option .radio-dot{width:18px;height:18px;flex:0 0 18px;border:2px solid var(--muted);border-radius:50%;position:relative}
+.quiz-radio-option input:checked + .radio-dot{border-color:var(--cyan);box-shadow:0 0 12px rgba(50,216,255,.25)}
+.quiz-radio-option input:checked + .radio-dot:after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.quiz-radio-option input:checked ~ span:last-child b{color:var(--cyan)}
+.quiz-radio-option span:last-child{display:block}.quiz-radio-option b{display:block;font-size:10px}.quiz-radio-option small{display:block;color:var(--muted);font-size:8px;margin-top:3px}
+.quiz-context{margin-top:12px;color:var(--muted);font:700 8px Orbitron,sans-serif;letter-spacing:1px;text-align:center}
+.quiz-card.quiz-completed{border-color:rgba(49,226,138,.38);box-shadow:inset 0 0 50px rgba(49,226,138,.07),0 0 22px rgba(49,226,138,.08)}
+.quiz-card.quiz-completed .quiz-glow{color:var(--green);border-color:rgba(49,226,138,.45);box-shadow:0 0 30px rgba(49,226,138,.15)}
+@media(prefers-reduced-motion:reduce){.quiz-radio-option{transition:none}}
