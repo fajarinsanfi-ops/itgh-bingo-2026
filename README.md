@@ -24,6 +24,19 @@ Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Fire
 - **Quiz ITGH** dengan status per-person per Bingo/Week.
 - Duplicate submission dicegah untuk kombinasi user + Bingo + Week + Activity.
 
+## 🧩 Latest Bingo Board
+
+Layout **Bingo A, B, dan C** pada aplikasi sekarang sudah disesuaikan dengan artwork board terbaru yang diberikan.
+
+- Setiap board berisi 25 activity dalam grid **5 × 5**.
+- Urutan activity mengikuti posisi **kiri → kanan, atas → bawah** pada artwork terbaru.
+- Nama activity, target, bobot poin, icon, dan warna activity mengikuti board terbaru.
+- Warna `orange`, `red`, dan `blue` tetap digunakan sesuai posisi/kategori pada artwork.
+- **Quiz ITGH tidak termasuk dalam 25 activity** dan tetap dirender sebagai panel terpisah di sisi kanan board.
+- Sumber data board berada di `js/data/boards.js`.
+
+> Jika artwork board direvisi lagi, cukup sesuaikan data di `js/data/boards.js` tanpa mengubah mekanisme submission, progress, statistics, atau leaderboard.
+
 ## 👥 Team Board
 
 Aplikasi saat ini diasumsikan digunakan oleh **satu tim**. Karena itu halaman utama menggunakan shared team view.
@@ -177,158 +190,3 @@ itgh-bingo-2026/
     └── data/
         └── boards.js
 ```
-
-## 🔥 Firebase Setup
-
-Project menggunakan:
-
-- Firebase Authentication / Google provider
-- Cloud Firestore
-- Firebase Storage
-
-Aktifkan Google Sign-In melalui:
-
-```text
-Firebase Console
-→ Authentication
-→ Sign-in providers
-→ Google
-```
-
-### Firestore Rules
-
-File `firestore.rules` di GitHub adalah source file dan **tidak otomatis dipublish ke Firebase**.
-
-Rules untuk model satu tim saat ini harus memungkinkan authenticated user membaca submission tim:
-
-```text
-allow read: if request.auth != null;
-```
-
-Create/update/delete tetap dibatasi berdasarkan Firebase UID pemilik submission.
-
-Setelah rules berubah:
-
-```text
-Firebase Console
-→ Firestore Database
-→ Rules
-→ Paste/verify rules
-→ Publish
-```
-
-### Storage
-
-Evidence disimpan berdasarkan path user. Jangan membuka akses Storage secara publik tanpa kebutuhan yang jelas.
-
-## 🔑 Google OAuth / GIS
-
-Buat OAuth 2.0 Client ID tipe **Web application**.
-
-Production Authorized JavaScript origin:
-
-```text
-https://fajarinsanfi-ops.github.io
-```
-
-Local development:
-
-```text
-http://localhost:5500
-http://127.0.0.1:5500
-```
-
-> Jangan pernah menaruh OAuth Client Secret, service account JSON, private key, atau Firebase Admin credentials di frontend/repository.
-
-## 🚀 GitHub Pages
-
-Pastikan GitHub Pages menggunakan branch:
-
-```text
-main
-```
-
-Setelah commit:
-
-1. Tunggu deployment selesai.
-2. Buka URL production.
-3. Jika asset lama masih tampil, lakukan hard refresh (`Ctrl + Shift + R`).
-
-## 🌐 Google Sites Embed
-
-Gunakan URL GitHub Pages:
-
-```text
-https://fajarinsanfi-ops.github.io/itgh-bingo-2026/
-```
-
-Di Google Sites:
-
-```text
-Insert → Embed → By URL
-```
-
-Google Sites hanya menjadi container; authentication, Firestore, Storage, dan application logic tetap berjalan dari GitHub Pages/Firebase.
-
-## 🖥️ Local Development
-
-Karena menggunakan ES Modules, jalankan melalui web server. Jangan membuka `index.html` langsung melalui `file://`.
-
-Contoh:
-
-```text
-http://localhost:5500/
-```
-
-## 🛠️ Troubleshooting
-
-### `401 invalid_client`
-
-Periksa Web Client ID dan Authorized JavaScript origins.
-
-### Firestore `permission-denied`
-
-Periksa rules **yang aktif di Firebase Console**, bukan hanya `firestore.rules` di GitHub. Pastikan authenticated user dapat membaca `submissions` jika leaderboard/team board digunakan.
-
-### Data hilang setelah reload
-
-Periksa user sudah login, Firestore berisi dokumen, rules mengizinkan read, dan lakukan hard refresh.
-
-### Halaman `Not Responding`
-
-Periksa Console browser. Hindari DOM observer yang merender ulang elemen yang sama. Achievement dan Team Board saat ini tidak menggunakan `MutationObserver` untuk render loop.
-
-### CSS tidak terbaca
-
-Pastikan path relatif dan struktur folder benar:
-
-```html
-<link rel="stylesheet" href="./css/styles.css">
-<link rel="stylesheet" href="./css/achievements.css">
-<link rel="stylesheet" href="./css/team-progress.css">
-<link rel="stylesheet" href="./css/quiz-status.css">
-```
-
-## 🔒 Security Notes
-
-- Firebase Web configuration bukan password, tetapi Security Rules wajib benar.
-- Jangan commit OAuth Client Secret atau service account credentials.
-- Submission create/update/delete harus dibatasi berdasarkan authenticated Firebase UID.
-- Evidence Storage dibatasi berdasarkan user path.
-- Jika privacy leaderboard perlu diperketat saat aplikasi growth, gunakan data agregat/backend daripada mengekspos seluruh submission mentah ke browser.
-
-## 🧭 Gamification Roadmap
-
-```text
-✅ Achievement & Badge
-⬜ Streak System
-⬜ Bingo Winning System
-✅ Podium Leaderboard
-⬜ Admin Dashboard
-```
-
-Admin Dashboard sengaja ditunda sampai jumlah participant/team berkembang. Arsitektur saat ini mempertahankan listener personal dan catatan `FUTURE / GROWTH` agar migrasi ke multi-team dapat dilakukan tanpa membuang fungsi yang sudah baik.
-
-## 📄 License
-
-Internal ITGH Health Challenge 2026 project.
