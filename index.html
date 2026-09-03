@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="./css/achievements.css">
   <link rel="stylesheet" href="./css/team-progress.css">
   <link rel="stylesheet" href="./css/quiz-status.css">
+  <link rel="stylesheet" href="./css/strava-form.css">
 </head>
 <body>
   <div class="ambient ambient-a"></div>
@@ -53,7 +54,7 @@
     </main>
   </section>
 
-  <div id="challengeModal" class="modal-backdrop" hidden><div class="modal glass"><div class="modal-head"><div class="modal-icon" id="modalIcon">🏃</div><div><small id="modalCategory">Individual Challenge</small><h3 id="modalTitle">Challenge</h3></div><button class="close-btn" data-close="challengeModal">×</button></div><div class="modal-body"><div class="target-box"><small>TARGET</small><strong id="modalTarget">≥ 3 KM</strong></div><label>HASIL / ACHIEVEMENT<input id="achievementInput" type="text" placeholder="Contoh: 5 KM / 45 menit / selesai"></label><label>UPLOAD BUKTI<input id="evidenceInput" type="file" accept="image/*,.pdf"></label><div id="uploadStatus" class="upload-status"></div></div><div class="modal-footer"><button class="ghost-btn" data-close="challengeModal">Cancel</button><button id="submitChallengeBtn" class="primary-btn">Submit Challenge</button></div></div></div>
+  <div id="challengeModal" class="modal-backdrop" hidden><div class="modal glass"><div class="modal-head"><div class="modal-icon" id="modalIcon">🏃</div><div><small id="modalCategory">Individual Challenge</small><h3 id="modalTitle">Challenge</h3></div><button class="close-btn" data-close="challengeModal">×</button></div><div class="modal-body"><div class="target-box"><small>TARGET</small><strong id="modalTarget">≥ 3 KM</strong></div><label>HASIL / ACHIEVEMENT<input id="achievementInput" type="text" placeholder="Contoh: 5 KM / 45 menit / selesai"></label><label>UPLOAD BUKTI<div id="evidencePicker" class="evidence-picker" tabindex="0" role="button" aria-controls="evidenceInput"><span class="evidence-picker-icon">📎</span><span class="evidence-picker-copy"><span class="evidence-picker-title">Pilih evidence</span><span class="evidence-picker-subtitle">JPG, PNG, WEBP, atau PDF</span></span><span id="evidenceFileName" class="evidence-picker-name">Belum ada file dipilih</span><input id="evidenceInput" type="file" accept="image/*,.pdf"></div></label><label class="strava-field">LINK STRAVA<span class="strava-input-wrap"><span class="strava-icon">🏃</span><input id="stravaInput" type="url" inputmode="url" autocomplete="url" placeholder="https://www.strava.com/activities/123456789"></span><span class="strava-help">Opsional — masukkan link aktivitas Strava sebagai bukti tambahan.</span></label><div id="uploadStatus" class="upload-status"></div></div><div class="modal-footer"><button class="ghost-btn" data-close="challengeModal">Cancel</button><button id="submitChallengeBtn" class="primary-btn">Submit Challenge</button></div></div></div>
 
   <div id="quizModal" class="modal-backdrop" hidden><div class="modal glass"><div class="modal-head"><div class="modal-icon">💡</div><div><small>KNOWLEDGE CHALLENGE</small><h3>Quiz ITGH</h3></div><button class="close-btn" data-close="quizModal">×</button></div><div class="modal-body"><label>1. Aktivitas kardio?<select id="q1"><option value="">Pilih</option><option value="y">Lari</option><option value="n">Tidur</option></select></label><label>2. Apa yang penting setelah olahraga?<select id="q2"><option value="">Pilih</option><option value="y">Hidrasi</option><option value="n">Tidak minum</option></select></label><label>3. Target tidur orang dewasa?<select id="q3"><option value="">Pilih</option><option value="y">7–9 jam</option><option value="n">2 jam</option></select></label></div><div class="modal-footer"><button class="ghost-btn" data-close="quizModal">Cancel</button><button id="submitQuizBtn" class="primary-btn">Submit Quiz</button></div></div></div>
 
@@ -63,5 +64,6 @@
   <script type="module" src="./js/team-progress.js"></script>
   <script type="module" src="./js/app.js"></script>
   <script type="module" src="./js/quiz-status.js"></script>
+  <script type="module" src="./js/strava-form.js"></script>
 </body>
 </html>
