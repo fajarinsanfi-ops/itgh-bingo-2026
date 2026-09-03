@@ -13,35 +13,12 @@
   <link rel="stylesheet" href="./css/team-progress.css">
   <link rel="stylesheet" href="./css/quiz-status.css">
   <link rel="stylesheet" href="./css/strava-form.css">
-  <link rel="stylesheet" href="./css/pullcord.css">
+  <!-- PullCord kept in the repo as legacy/future reference, but no longer loaded. -->
 </head>
 <body>
   <div class="ambient ambient-a"></div>
   <div class="ambient ambient-b"></div>
   <div class="grid-noise"></div>
-
-  <div id="pullcord" class="pullcord" aria-label="Toggle theme">
-    <div id="pullcordInner" class="pullcord-inner pullcord-inner--drop">
-      <svg viewBox="0 0 64 340" width="64" height="340" aria-hidden="true" style="overflow:visible">
-        <defs>
-          <linearGradient id="pc-knob" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#ffffff"></stop>
-            <stop offset="100%" stop-color="#e7e7ec"></stop>
-          </linearGradient>
-          <filter id="pc-knob-sh" x="-70%" y="-70%" width="240%" height="240%">
-            <feDropShadow dx="0" dy="1.4" stdDeviation="1.5" flood-color="rgba(0,0,0,0.32)"></feDropShadow>
-          </filter>
-        </defs>
-        <path id="pullcordPath" d="M 32.0 0.0 L 32.0 176.0" stroke="var(--pullcord-ink, rgba(127,127,127,.45))" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none" vector-effect="non-scaling-stroke"></path>
-        <g id="pullcordGroup">
-          <g filter="url(#pc-knob-sh)">
-            <circle cx="32" cy="176" r="6.5" fill="url(#pc-knob)" stroke="rgba(0,0,0,.10)" stroke-width=".5"></circle>
-          </g>
-        </g>
-      </svg>
-      <button id="pullcordKnob" class="pullcord-knob" type="button" aria-label="Toggle theme" aria-pressed="false" title="Toggle theme"></button>
-    </div>
-  </div>
 
   <section id="loginPage" class="page login-page">
     <div class="login-shell glass">
@@ -61,7 +38,7 @@
       <a class="brand" href="#"><span class="brand-icon">✦</span><span><b>HEALTH CHALLENGE</b><small>ITGH · 2026</small></span></a>
       <div class="top-actions">
         <a class="ghost-btn nav-btn" href="./stats.html">📊 Statistics</a>
-        <button id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme" hidden>☾</button>
+        <button id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">☾</button>
         <div class="profile"><img id="userAvatar" class="avatar" alt="Profile"><div class="profile-copy"><strong id="userName">User</strong><small id="userEmail">user@gmail.com</small></div></div>
         <button id="logoutBtn" class="ghost-btn">Sign out</button>
       </div>
@@ -91,6 +68,6 @@
   <script type="module" src="./js/app.js"></script>
   <script type="module" src="./js/quiz-status.js"></script>
   <script type="module" src="./js/strava-form.js"></script>
-  <script type="module" src="./js/pullcord.js"></script>
+  <!-- PullCord JS kept as legacy/future reference, but intentionally not loaded. -->
 </body>
 </html>
