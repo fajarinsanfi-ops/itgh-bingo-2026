@@ -1,11 +1,19 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getFirestore, collection, query, where, onSnapshot, serverTimestamp, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
+// LEGACY / FUTURE FEATURE: Firebase Storage upload imports are intentionally disabled for now.
+// import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = getApps()[0] || initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-export const storage = getStorage(app);
+// LEGACY / FUTURE FEATURE: keep Storage initialization commented until file upload is re-enabled.
+// export const storage = getStorage(app);
+
+/*
+LEGACY / FUTURE FEATURE: Evidence file upload is intentionally disabled for now.
+Keep the original implementation here so it can be restored when Firebase Storage
+is enabled/ready. The current app does not expose the file picker, so this function
+must remain as a harmless compatibility stub for the existing app import.
 
 export async function uploadEvidence(userId, file) {
   if (!file) return { url: "", name: "" };
@@ -13,6 +21,12 @@ export async function uploadEvidence(userId, file) {
   const storageRef = ref(storage, `evidence/${userId}/${Date.now()}-${safeName}`);
   await uploadBytes(storageRef, file, { contentType: file.type || "application/octet-stream" });
   return { url: await getDownloadURL(storageRef), name: file.name };
+}
+*/
+
+// Compatibility stub: upload is disabled, so no file is sent to Firebase Storage.
+export async function uploadEvidence() {
+  return { url: "", name: "" };
 }
 
 function buildSubmissionId({ userId, variant, week, challengeIndex }) {
