@@ -164,10 +164,11 @@ function render() {
         <td>${escapeHtml(r.userName || state.user?.displayName || state.user?.email || "")}</td>
         <td>${r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString("id-ID") : "Baru saja"}</td>
         <td><span class="done-pill">✓ Completed</span></td>
-        <td>${r.evidenceUrl ? `<a class="proof" href="${escapeHtml(r.evidenceUrl)}" target="_blank" rel="noopener">📎 ${escapeHtml(r.evidenceName || "Evidence")}</a>` : "—"}</td>
+        <td>${r.stravaUrl ? `<a class="proof strava-proof" href="${escapeHtml(r.stravaUrl)}" target="_blank" rel="noopener noreferrer">🏃 Strava</a>` : "—"}</td>
+        <td>${r.evidenceUrl ? `<a class="proof" href="${escapeHtml(r.evidenceUrl)}" target="_blank" rel="noopener noreferrer">📎 ${escapeHtml(r.evidenceName || "Evidence")}</a>` : "—"}</td>
       </tr>
     `).join("")
-    : `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Belum ada submission untuk board/week ini.</td></tr>`;
+    : `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Belum ada submission untuk board/week ini.</td></tr>`;
 }
 
 /* =========================================================
@@ -230,6 +231,7 @@ function closeModalIfOpen() {
 function resetChallengeForm() {
   if ($("achievementInput")) $("achievementInput").value = "";
   if ($("evidenceInput")) $("evidenceInput").value = "";
+  if ($("stravaInput")) $("stravaInput").value = "";
   if ($("uploadStatus")) {
     $("uploadStatus").textContent = "";
     $("uploadStatus").style.color = "";
@@ -312,11 +314,26 @@ async function submitChallenge() {
   const submissionIndex = Number(state.selected);
 
   const achievement = $("achievementInput").value.trim();
+  const stravaUrl = $("stravaInput")?.value.trim() || "";
 
   if (!achievement) {
     toast("Masukkan hasil/achievement terlebih dahulu.");
     $("achievementInput")?.focus();
     return;
+  }
+
+  if (stravaUrl) {
+    try {
+      const parsed = new URL(stravaUrl);
+      const hostname = parsed.hostname.toLowerCase();
+      if (parsed.protocol !== "https:" || !["strava.com", "www.strava.com"].includes(hostname)) {
+        throw new Error("Invalid Strava URL");
+      }
+    } catch {
+      toast("Link Strava tidak valid. Gunakan https://www.strava.com/...");
+      $("stravaInput")?.focus();
+      return;
+    }
   }
 
   const board = BOARDS[submissionVariant] || [];
@@ -373,6 +390,7 @@ async function submitChallenge() {
       challengeName: c[0],
       target: c[4],
       achievement,
+      stravaUrl,
       evidenceUrl: evidence.url,
       evidenceName: evidence.name
     });
@@ -380,7 +398,8 @@ async function submitChallenge() {
     console.log("Challenge saved successfully:", {
       variant: submissionVariant,
       week: submissionWeek,
-      challengeIndex: submissionIndex
+      challengeIndex: submissionIndex,
+      stravaUrl: stravaUrl || null
     });
 
     resetChallengeForm();
