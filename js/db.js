@@ -25,7 +25,8 @@ export async function saveSubmission(data) {
   if (!Number.isInteger(Number(data.week)) || Number(data.week) < 1) throw new Error("week must be a positive integer.");
   if (!Number.isInteger(Number(data.challengeIndex))) throw new Error("challengeIndex must be an integer.");
 
-  const stravaInput = document.getElementById("stravaInput");
+  const isChallenge = Number(data.challengeIndex) >= 0;
+  const stravaInput = isChallenge ? document.getElementById("stravaInput") : null;
   const stravaUrl = stravaInput?.value?.trim() || "";
 
   if (stravaUrl) {
@@ -44,12 +45,12 @@ export async function saveSubmission(data) {
     variant: String(data.variant).toUpperCase(),
     week: Number(data.week),
     challengeIndex: Number(data.challengeIndex),
-    stravaUrl
+    ...(isChallenge ? { stravaUrl } : {})
   };
   const submissionId = buildSubmissionId(normalized);
   await setDoc(doc(db, "submissions", submissionId), { ...normalized, submissionId, createdAt: serverTimestamp() });
 
-  // Clear the optional link only after a successful save.
+  // Clear the optional link only after a successful challenge save.
   if (stravaInput) stravaInput.value = "";
 
   return submissionId;
