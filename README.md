@@ -1,6 +1,6 @@
 # ITGH Bingo 2026 — Health Challenge
 
-Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Firebase, Bingo A/B/C, challenge submission, evidence, shared team progress, Achievement & Badge, statistics, podium leaderboard, dan Quiz ITGH.
+Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Firebase, Bingo A/B/C, challenge submission, link Strava, shared team progress, Achievement & Badge, statistics, podium leaderboard, dan Quiz ITGH.
 
 ## 🌐 Live App
 
@@ -14,8 +14,9 @@ Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Fire
 - Progress terpisah untuk **Week 1–4**.
 - **Team Board:** semua user yang login dapat melihat progress dan submission anggota tim.
 - Satu aktivitas tetap dapat dikerjakan oleh banyak personel; completion bersifat per-user.
-- Challenge submission dengan achievement dan evidence.
-- Evidence disimpan di Firebase Storage.
+- Challenge submission dengan achievement.
+- Link Strava sebagai bukti tambahan.
+- Evidence file upload sementara dinonaktifkan; implementasi Firebase Storage tetap dipertahankan sebagai fitur legacy/future.
 - Submission persisten di Cloud Firestore.
 - Light / Dark mode.
 - Futuristic responsive UI dan animasi.
@@ -23,6 +24,40 @@ Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Fire
 - Statistics dashboard, leaderboard, dan animated podium Top 3.
 - **Quiz ITGH** dengan status per-person per Bingo/Week.
 - Duplicate submission dicegah untuk kombinasi user + Bingo + Week + Activity.
+
+## 🔗 Strava Link
+
+Field Strava bersifat opsional. Aplikasi menerima dua format link HTTPS Strava:
+
+```text
+https://www.strava.com/activities/123456789
+https://strava.com/activities/123456789
+https://strava.app.link/AbCdEf123
+```
+
+Link selain domain Strava tersebut akan ditolak.
+
+Nilai link disimpan pada submission Firestore sebagai:
+
+```text
+stravaUrl
+```
+
+Link ditampilkan pada Activity Log sebagai tombol **🏃 Strava**.
+
+## 📎 Evidence File Upload
+
+Upload file evidence **sementara dinonaktifkan** karena Firebase Storage belum digunakan pada tahap aplikasi saat ini.
+
+Fungsi upload tidak dihapus agar dapat diaktifkan kembali pada pengembangan berikutnya. Implementasi legacy disimpan di `js/db.js` dan tidak digunakan oleh alur submission aktif.
+
+Rencana ketika Storage diaktifkan kembali:
+
+- JPG / PNG.
+- Maksimum 5 MB per file.
+- Validasi ukuran dan tipe file sebelum upload.
+- Upload ke Firebase Storage.
+- Simpan URL evidence pada Firestore setelah upload berhasil.
 
 ## 🧩 Latest Bingo Board
 
@@ -158,6 +193,15 @@ UID_BA_W1_C-1    # Quiz
 
 Struktur ini memisahkan user, Bingo, Week, dan Activity serta mencegah duplicate submission pada konteks yang sama.
 
+## 🗓️ Week Schedule
+
+```text
+Minggu 1 = 7 – 13 September 2026
+Minggu 2 = 14 – 20 September 2026
+Minggu 3 = 21 – 27 September 2026
+Minggu 4 = 28 September – 4 Oktober 2026
+```
+
 ## 🗂️ Project Structure
 
 ```text
@@ -175,7 +219,8 @@ itgh-bingo-2026/
 │   ├── achievements.css
 │   ├── team-progress.css
 │   ├── podium.css
-│   └── quiz-status.css
+│   ├── quiz-status.css
+│   └── strava-form.css
 │
 └── js/
     ├── app.js
@@ -186,6 +231,7 @@ itgh-bingo-2026/
     ├── team-progress.js
     ├── podium.js
     ├── quiz-status.js
+    ├── strava-form.js
     ├── firebase-config.js
     └── data/
         └── boards.js
