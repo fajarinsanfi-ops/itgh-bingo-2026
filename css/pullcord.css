@@ -1,0 +1,12 @@
+/* PullCord-inspired theme switch. Kept isolated so the existing app UI remains unchanged. */
+.pullcord{position:fixed;top:0;right:34px;width:42px;height:150px;z-index:90;cursor:grab;touch-action:none;user-select:none;outline:none}
+.pullcord:focus-visible{outline:2px solid var(--cyan);outline-offset:4px;border-radius:12px}
+.pullcord.is-dragging{cursor:grabbing}
+.pullcord-mount{position:absolute;top:0;left:50%;width:16px;height:9px;transform:translateX(-50%);border-radius:0 0 8px 8px;background:linear-gradient(180deg,#9aa8b8,#536173);box-shadow:0 2px 8px rgba(0,0,0,.28)}
+.pullcord-mount:after{content:"";position:absolute;left:50%;top:7px;width:4px;height:4px;transform:translateX(-50%);border-radius:50%;background:#dbe5ef}
+.pullcord-rope{position:absolute;top:7px;left:50%;width:3px;height:112px;transform:translateX(-50%);transform-origin:top center;border-radius:4px;background:linear-gradient(90deg,#64748b,#e2e8f0 48%,#475569);box-shadow:1px 0 4px rgba(0,0,0,.22)}
+.pullcord-handle{position:absolute;left:50%;top:113px;width:24px;height:30px;transform:translateX(-50%);border-radius:7px 7px 12px 12px;background:linear-gradient(145deg,#eef4f9,#6b7787);box-shadow:0 5px 12px rgba(0,0,0,.25),inset 1px 1px 2px rgba(255,255,255,.7);transition:transform .12s ease}
+.pullcord:hover .pullcord-handle{filter:brightness(1.06)}
+.pullcord.is-pulled .pullcord-handle{transform:translateX(-50%) scaleY(.96)}
+@media(max-width:700px){.pullcord{right:16px;transform:scale(.88);transform-origin:top right}}
+@media(prefers-reduced-motion:reduce){.pullcord-handle{transition:none}}
