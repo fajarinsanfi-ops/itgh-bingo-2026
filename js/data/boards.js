@@ -101,8 +101,8 @@ export const BOARDS = {
 };
 
 export const WEEKS = [
-  { id:1, label:"Minggu 1", date:"31 Agustus – 6 September 2026" },
-  { id:2, label:"Minggu 2", date:"7 – 13 September 2026" },
-  { id:3, label:"Minggu 3", date:"14 – 20 September 2026" },
-  { id:4, label:"Minggu 4", date:"21 – 27 September 2026" }
+  { id:1, label:"Minggu 1", date:"7 – 13 September 2026" },
+  { id:2, label:"Minggu 2", date:"14 – 20 September 2026" },
+  { id:3, label:"Minggu 3", date:"21 – 27 September 2026" },
+  { id:4, label:"Minggu 4", date:"28 September - 4 Oktober 2026" }
 ];
