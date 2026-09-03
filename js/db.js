@@ -24,9 +24,34 @@ export async function saveSubmission(data) {
   if (!["A", "B", "C"].includes(String(data.variant).toUpperCase())) throw new Error("variant must be A, B, or C.");
   if (!Number.isInteger(Number(data.week)) || Number(data.week) < 1) throw new Error("week must be a positive integer.");
   if (!Number.isInteger(Number(data.challengeIndex))) throw new Error("challengeIndex must be an integer.");
-  const normalized = { ...data, variant: String(data.variant).toUpperCase(), week: Number(data.week), challengeIndex: Number(data.challengeIndex) };
+
+  const stravaInput = document.getElementById("stravaInput");
+  const stravaUrl = stravaInput?.value?.trim() || "";
+
+  if (stravaUrl) {
+    try {
+      const parsed = new URL(stravaUrl);
+      if (!/^https?:$/.test(parsed.protocol) || !parsed.hostname.toLowerCase().includes("strava.com")) {
+        throw new Error("Strava link must use a valid strava.com URL.");
+      }
+    } catch {
+      throw new Error("Masukkan link Strava yang valid, contoh: https://www.strava.com/activities/123456789");
+    }
+  }
+
+  const normalized = {
+    ...data,
+    variant: String(data.variant).toUpperCase(),
+    week: Number(data.week),
+    challengeIndex: Number(data.challengeIndex),
+    stravaUrl
+  };
   const submissionId = buildSubmissionId(normalized);
   await setDoc(doc(db, "submissions", submissionId), { ...normalized, submissionId, createdAt: serverTimestamp() });
+
+  // Clear the optional link only after a successful save.
+  if (stravaInput) stravaInput.value = "";
+
   return submissionId;
 }
 
