@@ -1,21 +1,20 @@
-/* PullCord styling adapted from mortspace/pullcord (MIT).
-   Kept isolated from the existing application styles.
-
-   Geometry/physics are handled by js/pullcord.js. Positioning uses the same
-   custom-property concept as the source component while keeping the control
-   out of the topbar's login/logout controls.
-*/
+/*
+ * PullCord styling adapted from mortspace/pullcord (MIT).
+ * Geometry/physics live in js/pullcord.js; this file keeps the source's
+ * entrance animation, focus treatment, and custom-property positioning.
+ */
 
 .pullcord {
-  --pullcord-top: 66px;
-  --pullcord-right: 110px;
-  --pullcord-ink: rgba(127,127,127,.55);
+  --pullcord-top: 74px;
+  --pullcord-right: 18px;
+  --pullcord-z: 5;
+  --pullcord-ink: rgba(127, 127, 127, 0.55);
   position: fixed;
   top: var(--pullcord-top);
   right: var(--pullcord-right);
+  z-index: var(--pullcord-z);
   width: 64px;
   height: 340px;
-  z-index: 8;
   pointer-events: none;
 }
 
@@ -24,88 +23,51 @@
   inset: 0;
 }
 
-.pullcord-mount,
-.pullcord-rope,
-.pullcord-handle {
-  position: absolute;
+.pullcord-inner--drop {
+  animation: pullcord-drop 0.6s 0.4s cubic-bezier(0.45, 0, 0.9, 0.5) both;
 }
 
-.pullcord-mount {
-  top: 0;
-  left: 50%;
-  width: 16px;
-  height: 9px;
-  transform: translateX(-50%);
-  border-radius: 0 0 8px 8px;
-  background: linear-gradient(180deg, #ffffff, #c8c8ce);
-  box-shadow: 0 1px 4px rgba(0,0,0,.18);
-}
-
-.pullcord-mount::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 7px;
-  width: 4px;
-  height: 4px;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: #e7e7ec;
-}
-
-.pullcord-rope {
-  top: 7px;
-  left: 50%;
-  width: 1.5px;
-  height: 112px;
-  transform: translateX(-50%);
-  transform-origin: top center;
-  border-radius: 4px;
-  background: var(--pullcord-ink);
-}
-
-.pullcord-handle {
-  left: 50%;
-  top: 113px;
-  width: 13px;
-  height: 13px;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: linear-gradient(180deg, #ffffff 0%, #e7e7ec 100%);
-  border: .5px solid rgba(0,0,0,.10);
-  box-shadow: 0 1.4px 3px rgba(0,0,0,.32);
-  pointer-events: auto;
-}
-
-.pullcord:hover .pullcord-handle {
-  filter: brightness(1.02);
-}
-
-.pullcord.is-pulled .pullcord-handle {
-  filter: brightness(.98);
-}
-
-.pullcord:focus-visible {
-  outline: none;
-}
-
-@media (max-width: 900px) {
-  .pullcord {
-    --pullcord-right: 92px;
+@keyframes pullcord-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-230px);
   }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.pullcord-knob {
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 50%;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+}
+
+.pullcord-knob:active {
+  cursor: grabbing;
+}
+
+.pullcord-knob:focus-visible {
+  outline: 2px solid var(--pullcord-ink, rgba(127, 127, 127, 0.6));
+  outline-offset: -9px;
 }
 
 @media (max-width: 700px) {
   .pullcord {
-    --pullcord-top: 64px;
-    --pullcord-right: 76px;
-    transform: scale(.9);
+    --pullcord-top: 72px;
+    --pullcord-right: 8px;
+    transform: scale(0.9);
     transform-origin: top right;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pullcord-handle {
-    transition: none;
+  .pullcord-inner--drop {
+    animation: none;
   }
 }
