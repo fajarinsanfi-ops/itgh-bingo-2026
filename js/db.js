@@ -46,11 +46,13 @@ export async function saveSubmission(data) {
   if (stravaUrl) {
     try {
       const parsed = new URL(stravaUrl);
-      if (!/^https?:$/.test(parsed.protocol) || !parsed.hostname.toLowerCase().includes("strava.com")) {
-        throw new Error("Strava link must use a valid strava.com URL.");
+      const hostname = parsed.hostname.toLowerCase();
+      const allowedHosts = ["strava.com", "www.strava.com", "strava.app.link"];
+      if (parsed.protocol !== "https:" || !allowedHosts.includes(hostname)) {
+        throw new Error("Strava link must use a valid Strava URL.");
       }
     } catch {
-      throw new Error("Masukkan link Strava yang valid, contoh: https://www.strava.com/activities/123456789");
+      throw new Error("Masukkan link Strava yang valid: www.strava.com atau strava.app.link");
     }
   }
 
