@@ -13,11 +13,18 @@
   <link rel="stylesheet" href="./css/team-progress.css">
   <link rel="stylesheet" href="./css/quiz-status.css">
   <link rel="stylesheet" href="./css/strava-form.css">
+  <link rel="stylesheet" href="./css/pullcord.css">
 </head>
 <body>
   <div class="ambient ambient-a"></div>
   <div class="ambient ambient-b"></div>
   <div class="grid-noise"></div>
+
+  <div id="pullcord" class="pullcord" aria-label="Toggle theme" role="button" tabindex="0" aria-pressed="false">
+    <span class="pullcord-mount" aria-hidden="true"></span>
+    <span class="pullcord-rope" aria-hidden="true"></span>
+    <span class="pullcord-handle" aria-hidden="true"></span>
+  </div>
 
   <section id="loginPage" class="page login-page">
     <div class="login-shell glass">
@@ -37,7 +44,7 @@
       <a class="brand" href="#"><span class="brand-icon">✦</span><span><b>HEALTH CHALLENGE</b><small>ITGH · 2026</small></span></a>
       <div class="top-actions">
         <a class="ghost-btn nav-btn" href="./stats.html">📊 Statistics</a>
-        <button id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">☾</button>
+        <button id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme" hidden>☾</button>
         <div class="profile"><img id="userAvatar" class="avatar" alt="Profile"><div class="profile-copy"><strong id="userName">User</strong><small id="userEmail">user@gmail.com</small></div></div>
         <button id="logoutBtn" class="ghost-btn">Sign out</button>
       </div>
@@ -82,5 +89,6 @@
   <script type="module" src="./js/app.js"></script>
   <script type="module" src="./js/quiz-status.js"></script>
   <script type="module" src="./js/strava-form.js"></script>
+  <script type="module" src="./js/pullcord.js"></script>
 </body>
 </html>
