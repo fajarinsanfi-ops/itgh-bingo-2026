@@ -1,10 +1,9 @@
 /*
  * PullCord — vanilla port adapted from mortspace/pullcord (MIT).
  *
- * The original component uses React + Motion. This project is plain HTML/JS,
- * so the React layer is removed while preserving the important behavior:
- * 17 Verlet rope nodes, distance constraints, gravity, damping, high-refresh
- * normalization, sleeping, scripted pull, drag-to-pull, and entrance handoff.
+ * Interaction fix: a pointer-down is not automatically a drag. A normal
+ * click now triggers the scripted pull, while an actual drag follows the
+ * pointer and toggles after the configured stretch threshold.
  */
 
 const cord = document.getElementById("pullcord");
@@ -20,10 +19,8 @@ if (cord && knob && path && group && inner) {
   const SVG_H = 340;
   const SEGMENTS = 16;
   const REST_SEG = REST_Y / SEGMENTS;
-  const KNOB_R = 6.5;
   const HIT = 46;
 
-  // Same defaults as the source config.ts.
   const cfg = {
     gravity: 1250,
     damping: 0.94,
@@ -42,16 +39,17 @@ if (cord && knob && path && group && inner) {
   }
 
   const last = nodes.length - 1;
+  const target = { x: ANCHOR_X, y: REST_Y };
   let dragging = false;
-  let didDrag = false;
-  let clicked = false;
+  let moved = false;
+  let toggled = false;
+  let pointerId = null;
+  let pointerStart = { x: 0, y: 0 };
   let raf = 0;
   let running = false;
   let prevT = 0;
   let prevDt = 0;
-  let pointerId = null;
-  let pointerStart = { x: 0, y: 0 };
-  const target = { x: ANCHOR_X, y: REST_Y };
+  let suppressClick = false;
 
   function buildPath(points) {
     let d = `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`;
@@ -72,14 +70,6 @@ if (cord && knob && path && group && inner) {
     );
     knob.style.left = `${ANCHOR_X - HIT / 2}px`;
     knob.style.top = `${REST_Y - HIT / 2}px`;
-  }
-
-  function stop() {
-    if (raf) cancelAnimationFrame(raf);
-    raf = 0;
-    running = false;
-    prevT = 0;
-    prevDt = 0;
   }
 
   function step(now) {
@@ -162,16 +152,16 @@ if (cord && knob && path && group && inner) {
   }
 
   function toggleTheme() {
-    // Reuse the existing app theme button/listener when available, so the
-    // PullCord does not create a second source of truth for theme state.
     const themeToggle = document.getElementById("themeToggle");
     if (themeToggle) {
       themeToggle.click();
     } else {
       const current = document.documentElement.dataset.theme || "dark";
-      document.documentElement.dataset.theme = current === "dark" ? "light" : "dark";
-      localStorage.setItem("itgh.theme", current === "dark" ? "light" : "dark");
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem("itgh.theme", next);
     }
+
     const light = (document.documentElement.dataset.theme || "dark") === "light";
     cord.setAttribute("aria-pressed", String(light));
     knob.setAttribute("aria-pressed", String(light));
@@ -186,11 +176,9 @@ if (cord && knob && path && group && inner) {
 
   function pointInSvg(event) {
     const rect = cord.getBoundingClientRect();
-    const sx = W / rect.width;
-    const sy = SVG_H / rect.height;
     return {
-      x: (event.clientX - rect.left) * sx,
-      y: (event.clientY - rect.top) * sy,
+      x: (event.clientX - rect.left) * (W / rect.width),
+      y: (event.clientY - rect.top) * (SVG_H / rect.height),
     };
   }
 
@@ -199,8 +187,8 @@ if (cord && knob && path && group && inner) {
     if (reduce) return;
 
     dragging = true;
-    didDrag = true;
-    clicked = false;
+    moved = false;
+    toggled = false;
     pointerId = event.pointerId;
     pointerStart = { x: event.clientX, y: event.clientY };
     knob.setPointerCapture?.(event.pointerId);
@@ -211,21 +199,22 @@ if (cord && knob && path && group && inner) {
   knob.addEventListener("pointermove", (event) => {
     if (!dragging || event.pointerId !== pointerId) return;
 
+    const dxScreen = event.clientX - pointerStart.x;
+    const dyScreen = event.clientY - pointerStart.y;
+    if (Math.hypot(dxScreen, dyScreen) > 5) moved = true;
+
     const p = pointInSvg(event);
-    const offsetX = p.x - ANCHOR_X;
-    const offsetY = p.y - REST_Y;
-    const rx = offsetX;
-    const ry = REST_Y + offsetY;
-    const dist = Math.hypot(rx, ry) || 0.0001;
-    const maxD = REST_Y + cfg.stretchMax;
-    const scale = dist > maxD ? maxD / dist : 1;
+    const dx = p.x - ANCHOR_X;
+    const desiredY = p.y;
+    const maxDistance = REST_Y + cfg.stretchMax;
+    const distance = Math.hypot(dx, desiredY);
+    const scale = distance > maxDistance ? maxDistance / distance : 1;
 
-    target.x = ANCHOR_X + rx * scale;
-    target.y = ry * scale;
+    target.x = ANCHOR_X + dx * scale;
+    target.y = desiredY * scale;
 
-    const clickAt = Math.min(cfg.stretchToggle, cfg.stretchMax - 1);
-    if (!clicked && dist - REST_Y >= clickAt) {
-      clicked = true;
+    if (!toggled && target.y - REST_Y >= cfg.stretchToggle) {
+      toggled = true;
       toggleTheme();
     }
 
@@ -234,7 +223,9 @@ if (cord && knob && path && group && inner) {
 
   function endDrag(event) {
     if (!dragging || (event.pointerId != null && event.pointerId !== pointerId)) return;
+
     dragging = false;
+    suppressClick = moved;
 
     const p = nodes[last];
     const vx = p.x - p.ox;
@@ -249,14 +240,20 @@ if (cord && knob && path && group && inner) {
     knob.releasePointerCapture?.(pointerId);
     pointerId = null;
     wake();
-    window.requestAnimationFrame(() => { didDrag = false; });
+
+    window.setTimeout(() => {
+      suppressClick = false;
+    }, 0);
   }
 
   knob.addEventListener("pointerup", endDrag);
   knob.addEventListener("pointercancel", endDrag);
 
   knob.addEventListener("click", (event) => {
-    if (didDrag) return;
+    if (suppressClick) {
+      event.preventDefault();
+      return;
+    }
     if (event.detail === 0) return;
     scriptedPull();
   });
@@ -281,11 +278,9 @@ if (cord && knob && path && group && inner) {
     if (event.animationName === "pullcord-drop") endDrop();
   });
 
-  // Fallback if animationend is missed while the tab is backgrounded.
   window.setTimeout(endDrop, 1700);
 
-  const currentTheme = document.documentElement.dataset.theme || "dark";
-  const pulled = currentTheme === "light";
+  const pulled = (document.documentElement.dataset.theme || "dark") === "light";
   cord.setAttribute("aria-pressed", String(pulled));
   knob.setAttribute("aria-pressed", String(pulled));
   render();
