@@ -20,10 +20,27 @@
   <div class="ambient ambient-b"></div>
   <div class="grid-noise"></div>
 
-  <div id="pullcord" class="pullcord" aria-label="Toggle theme" role="button" tabindex="0" aria-pressed="false">
-    <span class="pullcord-mount" aria-hidden="true"></span>
-    <span class="pullcord-rope" aria-hidden="true"></span>
-    <span class="pullcord-handle" aria-hidden="true"></span>
+  <div id="pullcord" class="pullcord" aria-label="Toggle theme">
+    <div id="pullcordInner" class="pullcord-inner pullcord-inner--drop">
+      <svg viewBox="0 0 64 340" width="64" height="340" aria-hidden="true" style="overflow:visible">
+        <defs>
+          <linearGradient id="pc-knob" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffffff"></stop>
+            <stop offset="100%" stop-color="#e7e7ec"></stop>
+          </linearGradient>
+          <filter id="pc-knob-sh" x="-70%" y="-70%" width="240%" height="240%">
+            <feDropShadow dx="0" dy="1.4" stdDeviation="1.5" flood-color="rgba(0,0,0,0.32)"></feDropShadow>
+          </filter>
+        </defs>
+        <path id="pullcordPath" d="M 32.0 0.0 L 32.0 176.0" stroke="var(--pullcord-ink, rgba(127,127,127,.45))" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none" vector-effect="non-scaling-stroke"></path>
+        <g id="pullcordGroup">
+          <g filter="url(#pc-knob-sh)">
+            <circle cx="32" cy="176" r="6.5" fill="url(#pc-knob)" stroke="rgba(0,0,0,.10)" stroke-width=".5"></circle>
+          </g>
+        </g>
+      </svg>
+      <button id="pullcordKnob" class="pullcord-knob" type="button" aria-label="Toggle theme" aria-pressed="false" title="Toggle theme"></button>
+    </div>
   </div>
 
   <section id="loginPage" class="page login-page">
@@ -62,22 +79,7 @@
   </section>
 
   <div id="challengeModal" class="modal-backdrop" hidden><div class="modal glass"><div class="modal-head"><div class="modal-icon" id="modalIcon">🏃</div><div><small id="modalCategory">Individual Challenge</small><h3 id="modalTitle">Challenge</h3></div><button class="close-btn" data-close="challengeModal">×</button></div><div class="modal-body"><div class="target-box"><small>TARGET</small><strong id="modalTarget">≥ 3 KM</strong></div><label>HASIL / ACHIEVEMENT<input id="achievementInput" type="text" placeholder="Contoh: 5 KM / 45 menit / selesai"></label>
-    <!--
-      LEGACY / FUTURE FEATURE: Evidence file upload is intentionally disabled for now.
-      Keep this block for future reactivation when Firebase Storage is enabled/ready.
-      Current challenge submission uses achievement + optional Strava link only.
-      <label>UPLOAD BUKTI>
-        <div id="evidencePicker" class="evidence-picker" tabindex="0" role="button" aria-controls="evidenceInput">
-          <span class="evidence-picker-icon">📎</span>
-          <span class="evidence-picker-copy">
-            <span class="evidence-picker-title">Pilih evidence</span>
-            <span class="evidence-picker-subtitle">JPG, PNG, WEBP, atau PDF</span>
-          </span>
-          <span id="evidenceFileName" class="evidence-picker-name">Belum ada file dipilih</span>
-          <input id="evidenceInput" type="file" accept="image/*,.pdf">
-        </div>
-      </label>
-    -->
+    <!-- LEGACY / FUTURE FEATURE: Evidence file upload intentionally disabled. -->
     <label class="strava-field">LINK STRAVA<span class="strava-input-wrap"><span class="strava-icon">🏃</span><input id="stravaInput" type="url" inputmode="url" autocomplete="url" placeholder="https://www.strava.com/activities/123456789"></span><span class="strava-help">Opsional — masukkan link aktivitas Strava sebagai bukti tambahan.</span></label><div id="uploadStatus" class="upload-status"></div></div><div class="modal-footer"><button class="ghost-btn" data-close="challengeModal">Cancel</button><button id="submitChallengeBtn" class="primary-btn">Submit Challenge</button></div></div></div>
 
   <div id="quizModal" class="modal-backdrop" hidden><div class="modal glass"><div class="modal-head"><div class="modal-icon">💡</div><div><small>KNOWLEDGE CHALLENGE</small><h3>Quiz ITGH</h3></div><button class="close-btn" data-close="quizModal">×</button></div><div class="modal-body"><label>1. Aktivitas kardio?<select id="q1"><option value="">Pilih</option><option value="y">Lari</option><option value="n">Tidur</option></select></label><label>2. Apa yang penting setelah olahraga?<select id="q2"><option value="">Pilih</option><option value="y">Hidrasi</option><option value="n">Tidak minum</option></select></label><label>3. Target tidur orang dewasa?<select id="q3"><option value="">Pilih</option><option value="y">7–9 jam</option><option value="n">2 jam</option></select></label></div><div class="modal-footer"><button class="ghost-btn" data-close="quizModal">Cancel</button><button id="submitQuizBtn" class="primary-btn">Submit Quiz</button></div></div></div>
