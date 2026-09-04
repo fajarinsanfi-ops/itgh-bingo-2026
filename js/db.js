@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getFirestore, collection, query, where, onSnapshot, serverTimestamp, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, onSnapshot, serverTimestamp, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 // LEGACY / FUTURE FEATURE: Firebase Storage upload imports are intentionally disabled for now.
 // import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
@@ -68,22 +68,13 @@ export async function saveSubmission(data) {
     ...(isChallenge ? { stravaUrl } : {})
   };
 
-  // A challenge must be booked by the same user before it can be completed.
-  // Quiz submissions (challengeIndex -1) intentionally bypass this requirement.
-  if (isChallenge) {
-    const bookingId = buildBookingId(normalized);
-    const bookingSnap = await getDoc(doc(db, "bookings", bookingId));
-    if (!bookingSnap.exists()) {
-      throw new Error("BOOKING_REQUIRED");
-    }
-  }
+  // Booking is optional. A participant may complete an activity directly.
+  // LEGACY: previous BOOKING_REQUIRED check intentionally removed from the active path.
 
   const submissionId = buildSubmissionId(normalized);
   await setDoc(doc(db, "submissions", submissionId), { ...normalized, submissionId, createdAt: serverTimestamp() });
 
-  // Clear the optional link only after a successful challenge save.
   if (stravaInput) stravaInput.value = "";
-
   return submissionId;
 }
 
@@ -117,8 +108,8 @@ export function listenAllSubmissions(callback, onError) {
 
 /* =========================================================
    ACTIVITY BOOKING
-   Each user gets one booking document per Bingo/Week/Challenge.
-   Multiple users can book the same activity independently.
+   Booking is optional and per-user. Multiple users can book
+   the same activity independently.
 ========================================================= */
 
 export async function saveBooking(data) {
@@ -152,11 +143,7 @@ export async function saveBooking(data) {
 /* Shared booking listener for the selected Bingo + Week. */
 export function listenTeamBookings({ variant, week }, callback, onError) {
   return listenQuery(
-    query(
-      collection(db, "bookings"),
-      where("variant", "==", String(variant).toUpperCase()),
-      where("week", "==", Number(week))
-    ),
+    query(collection(db, "bookings"), where("variant", "==", String(variant).toUpperCase()), where("week", "==", Number(week))),
     "LISTEN TEAM BOOKINGS",
     callback,
     onError
