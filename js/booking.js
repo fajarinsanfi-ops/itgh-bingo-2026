@@ -218,11 +218,10 @@ function handleBoardClick(event) {
   const index = Number(cell.dataset.index);
   if (!Number.isInteger(index)) return;
 
-  const completed = completionCount(index) > 0 && isBookedByMe(index);
   const mine = isBookedByMe(index);
 
   // Let the existing app open its completion form once this user has booked.
-  if (mine || completed) return;
+  if (mine) return;
 
   // A user must book before completing, but the same activity can be booked
   // by many users. Other people's bookings never lock the square.
@@ -232,6 +231,11 @@ function handleBoardClick(event) {
 }
 
 function subscribeContext() {
+  if (!auth.currentUser) {
+    state.initialized = false;
+    return;
+  }
+
   const next = currentContext();
   if (next.variant === state.variant && next.week === state.week && state.initialized) return;
 
@@ -279,7 +283,7 @@ function init() {
 
   setInterval(() => {
     const next = currentContext();
-    if (next.variant !== state.variant || next.week !== state.week) subscribeContext();
+    if (next.variant !== state.variant || next.week !== state.week || (auth.currentUser && !state.initialized)) subscribeContext();
     if (auth.currentUser && document.querySelector("#boardGrid .cell:not([data-booking-decorated])")) decorateBoard();
   }, 500);
 }
