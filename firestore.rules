@@ -23,5 +23,22 @@ service cloud.firestore {
       allow delete: if request.auth != null
         && resource.data.userId == request.auth.uid;
     }
+
+    match /bookings/{bookingId} {
+      // All authenticated participants can see who has booked an activity.
+      allow read: if request.auth != null;
+
+      // A booking belongs to the signed-in user. The document ID is
+      // intentionally user-scoped so many users can book the same activity.
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid;
+
+      allow update: if request.auth != null
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid;
+
+      allow delete: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+    }
   }
 }
