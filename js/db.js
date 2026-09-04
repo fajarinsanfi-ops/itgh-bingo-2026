@@ -100,4 +100,56 @@ export function listenAllSubmissions(callback, onError) {
   return listenQuery(collection(db, "submissions"), "LISTEN ALL SUBMISSIONS", callback, onError);
 }
 
-/* FUTURE GROWTH: add teamId to users/submissions and replace global reads with team-scoped queries. */
+/* =========================================================
+   ACTIVITY BOOKING
+   Each user gets one booking document per Bingo/Week/Challenge.
+   Multiple users can book the same activity independently.
+========================================================= */
+
+function buildBookingId({ userId, variant, week, challengeIndex }) {
+  return `${userId}_B${String(variant).toUpperCase()}_W${Number(week)}_C${Number(challengeIndex)}`;
+}
+
+export async function saveBooking(data) {
+  if (!data?.userId) throw new Error("userId is required.");
+  if (!["A", "B", "C"].includes(String(data.variant).toUpperCase())) throw new Error("variant must be A, B, or C.");
+  if (!Number.isInteger(Number(data.week)) || Number(data.week) < 1) throw new Error("week must be a positive integer.");
+  if (!Number.isInteger(Number(data.challengeIndex)) || Number(data.challengeIndex) < 0) throw new Error("challengeIndex must be a non-negative integer.");
+
+  const normalized = {
+    userId: data.userId,
+    userName: data.userName || "Google User",
+    userEmail: data.userEmail || "",
+    variant: String(data.variant).toUpperCase(),
+    week: Number(data.week),
+    challengeIndex: Number(data.challengeIndex),
+    challengeName: data.challengeName || "",
+    target: data.target || "",
+    status: "booked"
+  };
+
+  const bookingId = buildBookingId(normalized);
+  await setDoc(doc(db, "bookings", bookingId), {
+    ...normalized,
+    bookingId,
+    createdAt: serverTimestamp()
+  }, { merge: true });
+
+  return bookingId;
+}
+
+/* Shared booking listener for the selected Bingo + Week. */
+export function listenTeamBookings({ variant, week }, callback, onError) {
+  return listenQuery(
+    query(
+      collection(db, "bookings"),
+      where("variant", "==", String(variant).toUpperCase()),
+      where("week", "==", Number(week))
+    ),
+    "LISTEN TEAM BOOKINGS",
+    callback,
+    onError
+  );
+}
+
+/* FUTURE GROWTH: add teamId to users/submissions/bookings and replace global reads with team-scoped queries. */
