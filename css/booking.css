@@ -1,0 +1,63 @@
+.booking-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 7px;
+  font-size: 9px;
+  line-height: 1.15;
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.booking-count {
+  font-weight: 800;
+  color: var(--text, #fff);
+}
+
+.completion-count {
+  font-weight: 700;
+  color: #57d68d;
+}
+
+.my-booking {
+  font-weight: 800;
+  color: #f5b942;
+}
+
+.booking-available {
+  color: var(--muted, #999);
+  font-weight: 600;
+  opacity: .9;
+}
+
+.cell.booked-by-me {
+  box-shadow: inset 0 0 0 2px rgba(245,185,66,.45);
+}
+
+.cell.has-completions {
+  box-shadow: inset 0 0 0 2px rgba(87,214,141,.4);
+}
+
+.booking-confirm-copy {
+  color: var(--muted, #aaa);
+  line-height: 1.55;
+  margin: 16px 0 0;
+}
+
+.booking-modal-count {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(127,127,127,.08);
+  color: var(--muted, #aaa);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .booking-meta {
+    font-size: 8px;
+    margin-top: 5px;
+  }
+}
