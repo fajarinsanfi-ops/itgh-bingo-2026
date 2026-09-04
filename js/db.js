@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getFirestore, collection, query, where, onSnapshot, serverTimestamp, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, onSnapshot, serverTimestamp, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 // LEGACY / FUTURE FEATURE: Firebase Storage upload imports are intentionally disabled for now.
 // import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
@@ -33,6 +33,10 @@ function buildSubmissionId({ userId, variant, week, challengeIndex }) {
   return `${userId}_B${String(variant).toUpperCase()}_W${Number(week)}_C${Number(challengeIndex)}`;
 }
 
+function buildBookingId({ userId, variant, week, challengeIndex }) {
+  return `${userId}_B${String(variant).toUpperCase()}_W${Number(week)}_C${Number(challengeIndex)}`;
+}
+
 export async function saveSubmission(data) {
   if (!data?.userId) throw new Error("userId is required.");
   if (!["A", "B", "C"].includes(String(data.variant).toUpperCase())) throw new Error("variant must be A, B, or C.");
@@ -63,6 +67,17 @@ export async function saveSubmission(data) {
     challengeIndex: Number(data.challengeIndex),
     ...(isChallenge ? { stravaUrl } : {})
   };
+
+  // A challenge must be booked by the same user before it can be completed.
+  // Quiz submissions (challengeIndex -1) intentionally bypass this requirement.
+  if (isChallenge) {
+    const bookingId = buildBookingId(normalized);
+    const bookingSnap = await getDoc(doc(db, "bookings", bookingId));
+    if (!bookingSnap.exists()) {
+      throw new Error("BOOKING_REQUIRED");
+    }
+  }
+
   const submissionId = buildSubmissionId(normalized);
   await setDoc(doc(db, "submissions", submissionId), { ...normalized, submissionId, createdAt: serverTimestamp() });
 
@@ -105,10 +120,6 @@ export function listenAllSubmissions(callback, onError) {
    Each user gets one booking document per Bingo/Week/Challenge.
    Multiple users can book the same activity independently.
 ========================================================= */
-
-function buildBookingId({ userId, variant, week, challengeIndex }) {
-  return `${userId}_B${String(variant).toUpperCase()}_W${Number(week)}_C${Number(challengeIndex)}`;
-}
 
 export async function saveBooking(data) {
   if (!data?.userId) throw new Error("userId is required.");
