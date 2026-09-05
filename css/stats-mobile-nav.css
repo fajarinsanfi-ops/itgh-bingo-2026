@@ -1,0 +1,9 @@
+/* Statistics page: keep full account navigation available on small screens. */
+@media (max-width: 560px){
+  .stats-page .top-actions > .ghost-btn:not(.nav-btn){
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:center;
+    white-space:nowrap;
+  }
+}
