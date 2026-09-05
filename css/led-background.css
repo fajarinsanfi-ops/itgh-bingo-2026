@@ -1,0 +1,27 @@
+/* ITGH Bingo 2026 — animated LED matrix background */
+#ledBackground{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  z-index:0;
+  pointer-events:none;
+  opacity:.82;
+}
+
+/* Keep the existing ambient/grid layers, but let the LED matrix be the hero background. */
+.ambient,.grid-noise{
+  z-index:0;
+  pointer-events:none;
+}
+
+/* Application surfaces remain above the animated canvas. */
+.page{z-index:1}
+.topbar{z-index:20}
+.modal-backdrop{z-index:100}
+.toast{z-index:200}
+
+@media (prefers-reduced-motion: reduce){
+  #ledBackground{opacity:.7}
+}
