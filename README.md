@@ -1,6 +1,6 @@
 # ITGH Bingo 2026 — Health Challenge
 
-Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Firebase, Bingo A/B/C, challenge submission, link Strava, shared team progress, Achievement & Badge, statistics, podium leaderboard, dan Quiz ITGH.
+Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Firebase, Bingo A/B/C, challenge submission, optional activity booking, link Strava, shared team progress, Achievement & Badge, statistics, podium leaderboard, dan Quiz ITGH.
 
 ## 🌐 Live App
 
@@ -14,12 +14,15 @@ Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Fire
 - Progress terpisah untuk **Week 1–4**.
 - **Team Board:** semua user yang login dapat melihat progress dan submission anggota tim.
 - Satu aktivitas tetap dapat dikerjakan oleh banyak personel; completion bersifat per-user.
+- **Activity Booking opsional:** personel dapat booking activity dari challenge modal, tetapi tetap dapat langsung menyelesaikan activity tanpa booking.
+- Booking ditampilkan pada board beserta jumlah personel yang sudah booking.
 - Challenge submission dengan achievement.
 - Link Strava sebagai bukti tambahan.
 - Evidence file upload sementara dinonaktifkan; implementasi Firebase Storage tetap dipertahankan sebagai fitur legacy/future.
-- Submission persisten di Cloud Firestore.
+- Submission dan booking persisten di Cloud Firestore.
 - Light / Dark mode.
-- Futuristic responsive UI dan animasi.
+- Responsive UI dengan animated LED dot-matrix background.
+- Typography menggunakan **Inter** sebagai font utama dan **Plus Jakarta Sans** untuk elemen UI yang sebelumnya menggunakan Orbitron.
 - Achievement & Badge Center.
 - Statistics dashboard, leaderboard, dan animated podium Top 3.
 - **Quiz ITGH** dengan status per-person per Bingo/Week.
@@ -27,7 +30,7 @@ Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Fire
 
 ## 🔗 Strava Link
 
-Field Strava bersifat opsional. Aplikasi menerima dua format link HTTPS Strava:
+Field Strava bersifat opsional. Aplikasi menerima format link HTTPS Strava berikut:
 
 ```text
 https://www.strava.com/activities/123456789
@@ -44,6 +47,33 @@ stravaUrl
 ```
 
 Link ditampilkan pada Activity Log sebagai tombol **🏃 Strava**.
+
+## 📌 Activity Booking
+
+Booking activity bersifat **opsional**, bukan syarat untuk completion.
+
+Alur pengguna:
+
+1. Buka salah satu activity pada Bingo Board.
+2. Pilih **📌 Book Activity** jika ingin mengambil activity tersebut.
+3. Activity tetap dapat langsung disubmit meskipun belum pernah di-book.
+4. Jika user sudah booking activity tersebut, tombol berubah menjadi **✓ You Booked**.
+5. Satu activity dapat di-book oleh banyak personel secara independen.
+6. Board menampilkan jumlah booking dan jumlah completion untuk activity tersebut.
+
+Booking disimpan pada collection:
+
+```text
+bookings/{bookingId}
+```
+
+Dengan document ID:
+
+```text
+{userId}_B{variant}_W{week}_C{challengeIndex}
+```
+
+> **Catatan Firebase:** collection `bookings` harus memiliki rule Firestore yang mengizinkan user terautentikasi membuat/membaca booking sesuai ownership. File `firestore.rules` di repository sudah mencakup rule tersebut.
 
 ## 📎 Evidence File Upload
 
@@ -81,12 +111,13 @@ Untuk Bingo + Week yang sedang dipilih:
 - Progress bar menunjukkan jumlah activity unik yang sudah diselesaikan tim.
 - Cell yang sudah memiliki submission menampilkan nama personel.
 - Activity Log menampilkan submission seluruh anggota tim.
+- Booking menampilkan jumlah personel yang sudah mengambil activity.
 - Personel tetap bebas memilih activity yang sama dengan personel lain.
 - Data antar Bingo dan Week tetap terisolasi.
 
 ### Future multi-team
 
-Fungsi personal/private `listenSubmissions()` di `js/db.js` sengaja dipertahankan untuk kebutuhan growth. Jika aplikasi berkembang menjadi beberapa tim, tambahkan `teamId` pada user/submission lalu scope query berdasarkan team.
+Fungsi personal/private `listenSubmissions()` di `js/db.js` sengaja dipertahankan untuk kebutuhan growth. Jika aplikasi berkembang menjadi beberapa tim, tambahkan `teamId` pada user/submission/booking lalu scope query berdasarkan team.
 
 ## 🧠 Quiz ITGH
 
@@ -173,6 +204,7 @@ Collection utama:
 ```text
 users/{userId}
 submissions/{submissionId}
+bookings/{bookingId}
 ```
 
 Submission menggunakan deterministic document ID:
@@ -191,7 +223,9 @@ UID_BC_W4_C21
 UID_BA_W1_C-1    # Quiz
 ```
 
-Struktur ini memisahkan user, Bingo, Week, dan Activity serta mencegah duplicate submission pada konteks yang sama.
+Booking menggunakan pola ID yang sama dengan `challengeIndex` activity.
+
+Struktur ini memisahkan user, Bingo, Week, dan Activity serta mencegah duplicate submission/booking oleh user yang sama pada konteks yang sama.
 
 ## 🗓️ Week Schedule
 
@@ -201,6 +235,17 @@ Minggu 2 = 14 – 20 September 2026
 Minggu 3 = 21 – 27 September 2026
 Minggu 4 = 28 September – 4 Oktober 2026
 ```
+
+## 🎨 UI / Visual
+
+Tampilan saat ini menggunakan:
+
+- **Inter** sebagai font utama untuk body dan general UI.
+- **Plus Jakarta Sans** untuk label, metric, heading, button, dan elemen yang membutuhkan emphasis.
+- Animated **LED dot-matrix background** dengan nuansa electric blue.
+- Glassmorphism surface dan responsive layout.
+- Light / Dark mode.
+- Old corner ambient gradients tetap tersedia di CSS sebagai legacy code tetapi tidak ditampilkan pada UI aktif.
 
 ## 🗂️ Project Structure
 
@@ -215,12 +260,15 @@ itgh-bingo-2026/
 │
 ├── css/
 │   ├── styles.css
+│   ├── typography.css
 │   ├── stats.css
 │   ├── achievements.css
 │   ├── team-progress.css
 │   ├── podium.css
 │   ├── quiz-status.css
-│   └── strava-form.css
+│   ├── strava-form.css
+│   ├── booking.css
+│   └── led-background.css
 │
 └── js/
     ├── app.js
@@ -232,7 +280,22 @@ itgh-bingo-2026/
     ├── podium.js
     ├── quiz-status.js
     ├── strava-form.js
+    ├── export-excel.js
+    ├── booking.js
+    ├── led-background.js
     ├── firebase-config.js
     └── data/
         └── boards.js
 ```
+
+## 🔐 Firebase Configuration
+
+Aplikasi menggunakan:
+
+- Firebase Authentication untuk Google Sign-In.
+- Cloud Firestore untuk profile, submission, dan booking.
+- Firebase Storage disiapkan untuk future evidence upload.
+
+Google Sign-In pada web menggunakan **Google Identity Services + Firebase `signInWithCredential`**.
+
+> Jangan menghapus fungsi legacy yang masih dikomentari hanya karena belum aktif. Beberapa bagian sengaja dipertahankan untuk memudahkan pengembangan fitur berikutnya tanpa mengganggu alur aktif saat ini.
