@@ -15,7 +15,10 @@ function decorateBoard() {
     let meta = cell.querySelector(".booking-meta");
     if (!meta) { meta = document.createElement("span"); meta.className = "booking-meta"; cell.appendChild(meta); }
     const booked = bookingCount(index), completed = completionCount(index), mine = isBookedByMe(index);
-    meta.innerHTML = booked ? `<span class="booking-count">${booked} booked</span>${completed ? `<span class="completion-count">${completed} completed</span>` : ""}${mine ? `<span class="my-booking">✓ You booked</span>` : ""}` : `<span class="booking-available">Booking optional</span>`;
+    const html = booked ? `<span class="booking-count">${booked} booked</span>${completed ? `<span class="completion-count">${completed} completed</span>` : ""}${mine ? `<span class="my-booking">✓ You booked</span>` : ""}` : `<span class="booking-available">Booking optional</span>`;
+    // Do not rewrite DOM when nothing changed. Rewriting here used to trigger
+    // the MutationObserver below continuously and could freeze the browser.
+    if (meta.innerHTML !== html) meta.innerHTML = html;
     cell.classList.toggle("booked-by-me", mine); cell.classList.toggle("has-bookings", booked > 0); cell.classList.toggle("has-completions", completed > 0);
   });
 }
@@ -48,8 +51,7 @@ function subscribeContext() {
 }
 function init() {
   $("bookActivityBtn")?.addEventListener("click", bookCurrentActivity);
-  const grid = $("boardGrid"); if (grid) new MutationObserver(() => { decorateBoard(); updateFormBookingStatus(); }).observe(grid, { childList: true, subtree: true });
   subscribeContext();
-  setInterval(() => { const next = currentContext(); if (next.variant !== state.variant || next.week !== state.week || (auth.currentUser && !state.initialized)) subscribeContext(); decorateBoard(); updateFormBookingStatus(); }, 700);
+  setInterval(() => { const next = currentContext(); if (next.variant !== state.variant || next.week !== state.week || (auth.currentUser && !state.initialized)) subscribeContext(); decorateBoard(); updateFormBookingStatus(); }, 1000);
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true }); else init();
