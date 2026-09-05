@@ -10,8 +10,30 @@
   opacity:.82;
 }
 
-/* Keep the existing ambient/grid layers, but let the LED matrix be the hero background. */
-.ambient,.grid-noise{
+/* Visual scope: disable the old orange/blue corner ambient gradients.
+   Kept commented for easy restoration during future UI iterations. */
+/*
+.ambient{
+  position:fixed;
+  width:45vw;
+  height:45vw;
+  border-radius:50%;
+  filter:blur(80px);
+  opacity:.17;
+  pointer-events:none;
+  z-index:0;
+}
+.ambient-a{background:var(--cyan);top:-18vw;left:-12vw;animation:float 9s ease-in-out infinite}
+.ambient-b{background:var(--orange);right:-18vw;bottom:-18vw;animation:float 12s ease-in-out infinite reverse}
+*/
+
+/* Disable the old corner ambient elements without removing them from the DOM. */
+.ambient{
+  display:none;
+}
+
+/* Keep the existing grid-noise layer available. */
+.grid-noise{
   z-index:0;
   pointer-events:none;
 }
