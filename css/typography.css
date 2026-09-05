@@ -1,0 +1,42 @@
+/* ITGH Bingo 2026 — typography override
+ * Orbitron is replaced visually by Plus Jakarta Sans.
+ * Kept separate so the existing stylesheet/layout stays untouched.
+ */
+
+.brand-mark,
+.eyebrow,
+.status-pill,
+.identity-card small,
+.bingo-btn,
+.week-btn small,
+.progress-head small,
+.progress-percent,
+.section-heading small,
+.num,
+.quiz-glow,
+.quiz-card strong,
+.record-head small,
+.modal-head small,
+.target-box small,
+th {
+  font-family: "Plus Jakarta Sans", Inter, system-ui, sans-serif;
+}
+
+.brand-mark,
+.eyebrow,
+.status-pill,
+.identity-card small,
+.bingo-btn,
+.week-btn small,
+.progress-head small,
+.progress-percent,
+.section-heading small,
+.num,
+.quiz-glow,
+.quiz-card strong,
+.record-head small,
+.modal-head small,
+.target-box small,
+th {
+  font-synthesis: none;
+}
