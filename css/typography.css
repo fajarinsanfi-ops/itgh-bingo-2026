@@ -40,3 +40,27 @@ th {
 th {
   font-synthesis: none;
 }
+
+/* Mobile navigation: keep Sign out available on the Bingo page.
+ * The base mobile rule hides secondary ghost buttons to save space;
+ * this override restores the authenticated user's logout action.
+ */
+@media (max-width: 560px) {
+  .top-actions > .ghost-btn:not(.nav-btn) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    padding: 8px 9px;
+    font-size: 9px;
+  }
+
+  .top-actions {
+    gap: 5px;
+  }
+
+  .topbar {
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+}
