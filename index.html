@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="./css/led-background.css">
   <link rel="stylesheet" href="./css/achievements.css">
   <link rel="stylesheet" href="./css/team-progress.css">
   <link rel="stylesheet" href="./css/quiz-status.css">
@@ -16,6 +17,8 @@
   <link rel="stylesheet" href="./css/booking.css">
 </head>
 <body>
+  <!-- Animated LED dot-matrix background. Existing application content stays above it. -->
+  <canvas id="ledBackground" aria-hidden="true"></canvas>
   <div class="ambient ambient-a"></div>
   <div class="ambient ambient-b"></div>
   <div class="grid-noise"></div>
@@ -64,6 +67,7 @@
   <div id="toast" class="toast" hidden></div>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script type="module" src="./js/led-background.js"></script>
   <script type="module" src="./js/achievements.js"></script>
   <script type="module" src="./js/team-progress.js"></script>
   <script type="module" src="./js/app.js"></script>
