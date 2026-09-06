@@ -37,8 +37,12 @@ function buildStats(rows) {
 
 function ensurePanel() {
   if ($("achievementPanel")) return $("achievementPanel");
-  const progress = document.querySelector(".progress-card");
-  if (!progress) return null;
+
+  // Achievement Center belongs to the Statistics / Performance page.
+  // Keep the panel injected so the badge logic remains independent from the
+  // Statistics page layout and can grow with future achievement types.
+  const anchor = document.querySelector(".metric-grid");
+  if (!anchor) return null;
 
   const panel = document.createElement("section");
   panel.id = "achievementPanel";
@@ -50,7 +54,7 @@ function ensurePanel() {
     </div>
     <div id="achievementGrid" class="achievement-grid"></div>
   `;
-  progress.insertAdjacentElement("afterend", panel);
+  anchor.insertAdjacentElement("afterend", panel);
   return panel;
 }
 
@@ -66,12 +70,12 @@ function render(rows) {
   $("achievementTotal").textContent = `/ ${BADGES.length} unlocked`;
   grid.innerHTML = BADGES.map(badge => {
     const isUnlocked = badge.check(stats);
-    return `<article class="achievement-badge ${isUnlocked ? "unlocked" : "locked"}"><div class="badge-icon">${badge.icon}</div><div class="badge-copy"><strong>${escapeHtml(badge.name)}</strong><span>${escapeHtml(badge.description)}</span><small>${escapeHtml(badge.progress(stats))}</small></div><div class="badge-state">${isUnlocked ? "✓" : "🔒"}</div></article>`;
+    return `<article class="achievement-badge ${isUnlocked ? "unlocked" : "locked"}><div class="badge-icon">${badge.icon}</div><div class="badge-copy"><strong>${escapeHtml(badge.name)}</strong><span>${escapeHtml(badge.description)}</span><small>${escapeHtml(badge.progress(stats))}</small></div><div class="badge-state">${isUnlocked ? "✓" : "🔒"}</div></article>`;
   }).join("");
   return true;
 }
 
-function waitForAppAndRender() {
+function waitForStatsAndRender() {
   if (render(lastRows)) {
     if (renderTimer) {
       clearInterval(renderTimer);
@@ -100,12 +104,11 @@ function start(user) {
     render(lastRows);
   }, error => console.error("Achievement listener error:", error));
 
-  // app.js controls when #appPage becomes visible. Poll briefly instead of
-  // observing the whole document, so achievement rendering can never create
-  // a MutationObserver feedback loop or freeze the browser.
-  waitForAppAndRender();
+  // stats.js controls when #statsPage becomes visible. Poll briefly instead
+  // of observing the whole document, avoiding MutationObserver feedback loops.
+  waitForStatsAndRender();
   if (!$("achievementPanel")) {
-    renderTimer = setInterval(waitForAppAndRender, 250);
+    renderTimer = setInterval(waitForStatsAndRender, 250);
     setTimeout(() => {
       if (renderTimer) {
         clearInterval(renderTimer);
