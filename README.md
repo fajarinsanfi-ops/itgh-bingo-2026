@@ -25,10 +25,59 @@ Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Fire
 - Light / Dark mode.
 - Responsive UI dengan animated LED dot-matrix background.
 - Typography menggunakan **Inter** sebagai font utama dan **Plus Jakarta Sans** untuk elemen UI yang sebelumnya menggunakan Orbitron.
-- Achievement & Badge Center.
+- Achievement & Badge Center tersedia pada halaman Statistics.
 - Statistics dashboard, leaderboard, dan animated podium Top 3.
 - **Quiz ITGH** dengan status per-person per Bingo/Week.
 - Duplicate submission dicegah untuk kombinasi user + Bingo + Week + Activity.
+
+## 🧭 Product Flow & Information Architecture
+
+Main page dan Statistics memiliki fokus yang berbeda agar pengguna selalu memahami konteks halaman yang sedang digunakan.
+
+> **Main page sebaiknya fokus pada "What should I do now?"**
+>
+> **Sedangkan Statistics fokus pada "How am I doing?"**
+
+### Main Bingo page
+
+Main page mengikuti alur:
+
+```text
+Header
+  ↓
+Hero
+  ↓
+Outdoor Activity Check
+  ↓
+Bingo Selector
+  ↓
+Week Selector
+  ↓
+Team Progress
+  ↓
+Bingo Board
+  ↓
+Activity Log
+```
+
+Outdoor Activity Check ditempatkan sebelum pemilihan Bingo dan Week karena kondisi cuaca serta kualitas udara dapat menjadi **decision maker** bagi peserta sebelum melakukan aktivitas outdoor. Fitur ini memberikan konteks lingkungan terlebih dahulu, kemudian peserta menentukan challenge yang akan dikerjakan.
+
+Outdoor Activity Check berfungsi sebagai panduan keputusan, bukan hard gate. Kondisi yang kurang ideal memberikan peringatan atau rekomendasi, tetapi tidak secara otomatis memblokir seluruh Bingo activity.
+
+### Statistics page
+
+Statistics berfokus pada evaluasi dan refleksi terhadap progress yang sudah dilakukan, termasuk:
+
+- Your Rank.
+- Personal performance.
+- Bingo progress.
+- Leaderboard.
+- Participant analytics.
+- Recent submissions.
+- **Achievement Center / Badges & Milestones.**
+- Animated Top 3 Podium.
+
+Dengan pembagian ini, halaman utama tetap berorientasi pada **aksi berikutnya**, sedangkan Statistics berorientasi pada **hasil dan performa**.
 
 ## 🌤️ Outdoor Activity Check
 
@@ -134,11 +183,13 @@ Quiz ITGH menggunakan status per-person per Bingo/Week. Status disimpan di Fires
 
 ## 🏅 Achievement & Badge
 
+Achievement Center berada pada halaman **Statistics**, bukan pada main Bingo page, agar halaman utama tetap fokus pada aktivitas yang perlu dilakukan saat ini.
+
 Badge dihitung dari submission personal, termasuk First Step, Getting Active, On Fire, 25 Strong, Bingo Explorer, Week Warrior, Evidence Hero, dan Quiz Master.
 
 ## 🏆 Statistics & Podium
 
-Halaman Statistics menampilkan Total Submitters, Total Submissions, Completed Activities, Total Points, Your Rank, statistik personal, Progress Bingo A/B/C, Top Performers, Submitter Statistics, Recent Submissions, dan animated Top 3 Podium.
+Halaman Statistics menampilkan Total Submitters, Total Submissions, Completed Activities, Total Points, Your Rank, statistik personal, Progress Bingo A/B/C, Top Performers, Submitter Statistics, Recent Submissions, **Achievement Center**, dan animated Top 3 Podium.
 
 Ranking memprioritaskan:
 
