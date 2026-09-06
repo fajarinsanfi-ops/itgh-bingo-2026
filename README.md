@@ -1,6 +1,6 @@
 # ITGH Bingo 2026 — Health Challenge
 
-Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Firebase, Bingo A/B/C, challenge submission, optional activity booking, link Strava, shared team progress, Achievement & Badge, statistics, podium leaderboard, dan Quiz ITGH.
+Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Firebase, Bingo A/B/C, challenge submission, optional activity booking, link Strava, shared team progress, Achievement & Badge, statistics, podium leaderboard, Quiz ITGH, serta **Outdoor Activity Check**.
 
 ## 🌐 Live App
 
@@ -18,6 +18,8 @@ Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Fire
 - Booking ditampilkan pada board beserta jumlah personel yang sudah booking.
 - Challenge submission dengan achievement.
 - Link Strava sebagai bukti tambahan.
+- **Outdoor Activity Check:** cuaca saat ini, kualitas udara/AQI, PM2.5, dan rekomendasi aktivitas outdoor.
+- Default lokasi **Jakarta**, dengan pilihan kota lain dan opsi menggunakan lokasi perangkat.
 - Evidence file upload sementara dinonaktifkan; implementasi Firebase Storage tetap dipertahankan sebagai fitur legacy/future.
 - Submission dan booking persisten di Cloud Firestore.
 - Light / Dark mode.
@@ -27,6 +29,43 @@ Web application untuk **ITGH Health Challenge 2026** dengan Google Sign-In, Fire
 - Statistics dashboard, leaderboard, dan animated podium Top 3.
 - **Quiz ITGH** dengan status per-person per Bingo/Week.
 - Duplicate submission dicegah untuk kombinasi user + Bingo + Week + Activity.
+
+## 🌤️ Outdoor Activity Check
+
+Fitur ini membantu peserta menilai apakah kondisi lingkungan saat ini cukup mendukung aktivitas outdoor.
+
+Informasi yang ditampilkan:
+
+- Suhu dan kondisi cuaca saat ini.
+- Apparent temperature / suhu terasa.
+- Kelembapan.
+- Curah hujan saat ini.
+- Kecepatan angin.
+- Air Quality Index (AQI).
+- PM2.5.
+- Rekomendasi: **Baik untuk Outdoor / Pertimbangkan / Batasi / Kurang Ideal / Tidak Disarankan**.
+
+Lokasi default adalah **Jakarta, Indonesia**. Peserta dapat memilih kota lain dari daftar atau meminta koordinat perangkat melalui browser Geolocation.
+
+Data saat ini diambil dari **Open-Meteo Weather API dan Open-Meteo Air Quality API**. API digunakan langsung dari browser dan tidak membutuhkan API key.
+
+> Rekomendasi bersifat panduan umum, bukan diagnosis atau pengganti keputusan medis/profesional. Kondisi lokal dapat berubah dan peserta tetap perlu menggunakan penilaian pribadi yang wajar.
+
+## 🛠️ Tech Stack
+
+| Technology | Usage |
+|---|---|
+| **HTML5** | Struktur halaman Bingo & Statistics |
+| **CSS3** | UI styling, responsive layout, theme, glassmorphism, animations |
+| **JavaScript (ES Modules)** | Logic aplikasi frontend menggunakan native browser JavaScript |
+| **Firebase Authentication** | Google Sign-In |
+| **Cloud Firestore** | User profile, submissions, bookings, statistics |
+| **Firebase Storage** | Disiapkan untuk future evidence upload |
+| **Open-Meteo API** | Data cuaca dan kualitas udara |
+
+### Frontend approach
+
+Aplikasi menggunakan **Vanilla JavaScript** dengan native ES Modules dan tidak menggunakan framework frontend seperti React, Vue, atau Angular.
 
 ## 🔗 Strava Link
 
@@ -40,13 +79,7 @@ https://strava.app.link/AbCdEf123
 
 Link selain domain Strava tersebut akan ditolak.
 
-Nilai link disimpan pada submission Firestore sebagai:
-
-```text
-stravaUrl
-```
-
-Link ditampilkan pada Activity Log sebagai tombol **🏃 Strava**.
+Nilai link disimpan pada submission Firestore sebagai `stravaUrl` dan ditampilkan pada Activity Log sebagai tombol **🏃 Strava**.
 
 ## 📌 Activity Booking
 
@@ -61,17 +94,7 @@ Alur pengguna:
 5. Satu activity dapat di-book oleh banyak personel secara independen.
 6. Board menampilkan jumlah booking dan jumlah completion untuk activity tersebut.
 
-Booking disimpan pada collection:
-
-```text
-bookings/{bookingId}
-```
-
-Dengan document ID:
-
-```text
-{userId}_B{variant}_W{week}_C{challengeIndex}
-```
+Booking disimpan pada collection `bookings/{bookingId}` dengan document ID `{userId}_B{variant}_W{week}_C{challengeIndex}`.
 
 > **Catatan Firebase:** collection `bookings` harus memiliki rule Firestore yang mengizinkan user terautentikasi membuat/membaca booking sesuai ownership. File `firestore.rules` di repository sudah mencakup rule tersebut.
 
@@ -79,37 +102,23 @@ Dengan document ID:
 
 Upload file evidence **sementara dinonaktifkan** karena Firebase Storage belum digunakan pada tahap aplikasi saat ini.
 
-Fungsi upload tidak dihapus agar dapat diaktifkan kembali pada pengembangan berikutnya. Implementasi legacy disimpan di `js/db.js` dan tidak digunakan oleh alur submission aktif.
-
-Rencana ketika Storage diaktifkan kembali:
-
-- JPG / PNG.
-- Maksimum 5 MB per file.
-- Validasi ukuran dan tipe file sebelum upload.
-- Upload ke Firebase Storage.
-- Simpan URL evidence pada Firestore setelah upload berhasil.
+Fungsi upload tidak dihapus agar dapat diaktifkan kembali pada pengembangan berikutnya. Implementasi legacy disimpan di `js/db.js`.
 
 ## 🧩 Latest Bingo Board
 
-Layout **Bingo A, B, dan C** pada aplikasi sekarang sudah disesuaikan dengan artwork board terbaru yang diberikan.
+Layout **Bingo A, B, dan C** sudah disesuaikan dengan artwork board terbaru.
 
 - Setiap board berisi 25 activity dalam grid **5 × 5**.
-- Urutan activity mengikuti posisi **kiri → kanan, atas → bawah** pada artwork terbaru.
+- Urutan activity mengikuti posisi **kiri → kanan, atas → bawah**.
 - Nama activity, target, bobot poin, icon, dan warna activity mengikuti board terbaru.
-- Warna `orange`, `red`, dan `blue` tetap digunakan sesuai posisi/kategori pada artwork.
-- **Quiz ITGH tidak termasuk dalam 25 activity** dan tetap dirender sebagai panel terpisah di sisi kanan board.
+- Quiz ITGH tidak termasuk dalam 25 activity dan tetap dirender sebagai panel terpisah.
 - Sumber data board berada di `js/data/boards.js`.
-
-> Jika artwork board direvisi lagi, cukup sesuaikan data di `js/data/boards.js` tanpa mengubah mekanisme submission, progress, statistics, atau leaderboard.
 
 ## 👥 Team Board
 
-Aplikasi saat ini diasumsikan digunakan oleh **satu tim**. Karena itu halaman utama menggunakan shared team view.
-
-Untuk Bingo + Week yang sedang dipilih:
+Aplikasi saat ini diasumsikan digunakan oleh **satu tim**. Untuk Bingo + Week yang sedang dipilih:
 
 - Progress bar menunjukkan jumlah activity unik yang sudah diselesaikan tim.
-- Cell yang sudah memiliki submission menampilkan nama personel.
 - Activity Log menampilkan submission seluruh anggota tim.
 - Booking menampilkan jumlah personel yang sudah mengambil activity.
 - Personel tetap bebas memilih activity yang sama dengan personel lain.
@@ -121,75 +130,15 @@ Fungsi personal/private `listenSubmissions()` di `js/db.js` sengaja dipertahanka
 
 ## 🧠 Quiz ITGH
 
-Quiz ITGH pada setiap board sekarang menggunakan form status sederhana:
-
-```text
-○ Belum dikerjakan   ← default
-○ Sudah dikerjakan
-```
-
-Tidak ada lagi pertanyaan pilihan ganda pada UI utama.
-
-Status disimpan di Firestore sebagai submission dengan:
-
-```text
-challengeIndex = -1
-```
-
-ID dokumen mengikuti konteks:
-
-```text
-{userId}_B{variant}_W{week}_C-1
-```
-
-Dengan demikian setiap personel dapat memiliki status Quiz sendiri untuk:
-
-```text
-Bingo A + Week 1
-Bingo A + Week 2
-Bingo B + Week 1
-...
-Bingo C + Week 4
-```
-
-Status Quiz tidak dihitung sebagai completed activity pada progress board.
-
-> Logika quiz lama yang berupa pertanyaan/validasi jawaban sengaja tidak dihapus dari `js/app.js`; modul `js/quiz-status.js` mengambil alih UI Quiz ITGH. Ini memudahkan pengaktifan kembali model quiz berbasis pertanyaan ketika diperlukan.
+Quiz ITGH menggunakan status per-person per Bingo/Week. Status disimpan di Firestore sebagai submission dengan `challengeIndex = -1` dan tidak dihitung sebagai completed activity pada progress board.
 
 ## 🏅 Achievement & Badge
 
-Badge dihitung dari submission personal:
-
-| Badge | Syarat |
-|---|---|
-| 🏃 First Step | 1 aktivitas selesai |
-| ⚡ Getting Active | 5 aktivitas selesai |
-| 🔥 On Fire | 10 aktivitas selesai |
-| 💎 25 Strong | 25 aktivitas selesai |
-| 🧭 Bingo Explorer | Berpartisipasi di Bingo A, B, dan C |
-| 📅 Week Warrior | Aktif pada Week 1–4 |
-| 📸 Evidence Hero | 5 aktivitas dengan evidence |
-| 🧠 Quiz Master | 3 Quiz ITGH selesai |
-
-Achievement menggunakan data Firestore secara real-time.
+Badge dihitung dari submission personal, termasuk First Step, Getting Active, On Fire, 25 Strong, Bingo Explorer, Week Warrior, Evidence Hero, dan Quiz Master.
 
 ## 🏆 Statistics & Podium
 
-Halaman Statistics menampilkan:
-
-- Total Submitters
-- Total Submissions
-- Completed Activities
-- Total Points
-- Your Rank
-- Your Statistics
-- Progress Bingo A/B/C
-- Top Performers
-- Submitter Statistics
-- Recent Submissions
-- Animated Top 3 Podium
-
-Filter tersedia untuk Bingo dan Week.
+Halaman Statistics menampilkan Total Submitters, Total Submissions, Completed Activities, Total Points, Your Rank, statistik personal, Progress Bingo A/B/C, Top Performers, Submitter Statistics, Recent Submissions, dan animated Top 3 Podium.
 
 Ranking memprioritaskan:
 
@@ -207,25 +156,7 @@ submissions/{submissionId}
 bookings/{bookingId}
 ```
 
-Submission menggunakan deterministic document ID:
-
-```text
-{userId}_B{variant}_W{week}_C{challengeIndex}
-```
-
-Contoh:
-
-```text
-UID_BA_W1_C0
-UID_BA_W2_C0
-UID_BB_W3_C21
-UID_BC_W4_C21
-UID_BA_W1_C-1    # Quiz
-```
-
-Booking menggunakan pola ID yang sama dengan `challengeIndex` activity.
-
-Struktur ini memisahkan user, Bingo, Week, dan Activity serta mencegah duplicate submission/booking oleh user yang sama pada konteks yang sama.
+Submission menggunakan deterministic document ID `{userId}_B{variant}_W{week}_C{challengeIndex}`. Booking menggunakan pola ID yang sama dengan `challengeIndex` activity.
 
 ## 🗓️ Week Schedule
 
@@ -241,7 +172,7 @@ Minggu 4 = 28 September – 4 Oktober 2026
 Tampilan saat ini menggunakan:
 
 - **Inter** sebagai font utama untuk body dan general UI.
-- **Plus Jakarta Sans** untuk label, metric, heading, button, dan elemen yang membutuhkan emphasis.
+- **Plus Jakarta Sans** untuk label, metric, heading, button, dan elemen emphasis.
 - Animated **LED dot-matrix background** dengan nuansa electric blue.
 - Glassmorphism surface dan responsive layout.
 - Light / Dark mode.
@@ -268,6 +199,7 @@ itgh-bingo-2026/
 │   ├── quiz-status.css
 │   ├── strava-form.css
 │   ├── booking.css
+│   ├── outdoor-conditions.css
 │   └── led-background.css
 │
 └── js/
@@ -282,6 +214,7 @@ itgh-bingo-2026/
     ├── strava-form.js
     ├── export-excel.js
     ├── booking.js
+    ├── outdoor-conditions.js
     ├── led-background.js
     ├── firebase-config.js
     └── data/
@@ -290,12 +223,6 @@ itgh-bingo-2026/
 
 ## 🔐 Firebase Configuration
 
-Aplikasi menggunakan:
-
-- Firebase Authentication untuk Google Sign-In.
-- Cloud Firestore untuk profile, submission, dan booking.
-- Firebase Storage disiapkan untuk future evidence upload.
-
-Google Sign-In pada web menggunakan **Google Identity Services + Firebase `signInWithCredential`**.
+Aplikasi menggunakan Firebase Authentication untuk Google Sign-In dan Cloud Firestore untuk profile, submission, serta booking. Firebase Storage disiapkan untuk future evidence upload.
 
 > Jangan menghapus fungsi legacy yang masih dikomentari hanya karena belum aktif. Beberapa bagian sengaja dipertahankan untuk memudahkan pengembangan fitur berikutnya tanpa mengganggu alur aktif saat ini.
