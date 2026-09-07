@@ -44,10 +44,9 @@ export async function saveSubmission(data) {
   if (!Number.isInteger(Number(data.challengeIndex))) throw new Error("challengeIndex must be an integer.");
 
   const isChallenge = Number(data.challengeIndex) >= 0;
-  const stravaInput = isChallenge ? document.getElementById("stravaInput") : null;
-  const stravaUrl = stravaInput?.value?.trim() || "";
+  const stravaUrl = String(data.stravaUrl || "").trim();
 
-  if (stravaUrl) {
+  if (stravaUrl && isChallenge) {
     try {
       const parsed = new URL(stravaUrl);
       const hostname = parsed.hostname.toLowerCase();
@@ -74,7 +73,6 @@ export async function saveSubmission(data) {
   const submissionId = buildSubmissionId(normalized);
   await setDoc(doc(db, "submissions", submissionId), { ...normalized, submissionId, createdAt: serverTimestamp() });
 
-  if (stravaInput) stravaInput.value = "";
   return submissionId;
 }
 
