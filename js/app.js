@@ -29,6 +29,25 @@ function escapeHtml(value = "") {
   })[c]);
 }
 
+function safeUrl(value = "") {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  try {
+    const parsed = new URL(raw);
+    const hostname = parsed.hostname.toLowerCase();
+    const allowedHosts = ["strava.com", "www.strava.com", "strava.app.link"];
+    return parsed.protocol === "https:" && allowedHosts.includes(hostname) ? parsed.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function getStravaUrl(record = {}) {
+  // Support the current field plus legacy variants from earlier Strava saves.
+  return safeUrl(record.stravaUrl || record.stravaURL || record.strava || record.activityUrl || "");
+}
+
 function toast(msg) {
   const el = $("toast");
   if (!el) return;
@@ -153,7 +172,9 @@ function render() {
   });
 
   $("recordsBody").innerHTML = state.submissions.length
-    ? state.submissions.map((r, i) => `
+    ? state.submissions.map((r, i) => {
+      const stravaUrl = getStravaUrl(r);
+      return `
       <tr>
         <td>${i + 1}</td>
         <td>
@@ -164,10 +185,11 @@ function render() {
         <td>${escapeHtml(r.userName || state.user?.displayName || state.user?.email || "")}</td>
         <td>${r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString("id-ID") : "Baru saja"}</td>
         <td><span class="done-pill">✓ Completed</span></td>
-        <td>${r.stravaUrl ? `<a class="proof strava-proof" href="${escapeHtml(r.stravaUrl)}" target="_blank" rel="noopener noreferrer">🏃 Strava</a>` : "—"}</td>
+        <td>${stravaUrl ? `<a class="proof strava-proof" href="${escapeHtml(stravaUrl)}" target="_blank" rel="noopener noreferrer">🏃 Strava</a>` : "—"}</td>
         <td>${r.evidenceUrl ? `<a class="proof" href="${escapeHtml(r.evidenceUrl)}" target="_blank" rel="noopener noreferrer">📎 ${escapeHtml(r.evidenceName || "Evidence")}</a>` : "—"}</td>
       </tr>
-    `).join("")
+    `;
+    }).join("")
     : `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Belum ada submission untuk board/week ini.</td></tr>`;
 }
 
@@ -194,7 +216,6 @@ function subscribe() {
       week: context.week
     },
     rows => {
-      // Ignore a late callback from an old Bingo/Week listener.
       if (
         state.variant !== context.variant ||
         Number(state.week) !== Number(context.week)
@@ -308,7 +329,6 @@ async function submitChallenge() {
     return;
   }
 
-  // Capture the exact context before any async work starts.
   const submissionVariant = state.variant;
   const submissionWeek = Number(state.week);
   const submissionIndex = Number(state.selected);
@@ -323,14 +343,9 @@ async function submitChallenge() {
   }
 
   if (stravaUrl) {
-    try {
-      const parsed = new URL(stravaUrl);
-      const hostname = parsed.hostname.toLowerCase();
-      if (parsed.protocol !== "https:" || !["strava.com", "www.strava.com"].includes(hostname)) {
-        throw new Error("Invalid Strava URL");
-      }
-    } catch {
-      toast("Link Strava tidak valid. Gunakan https://www.strava.com/...");
+    const validatedStravaUrl = safeUrl(stravaUrl);
+    if (!validatedStravaUrl) {
+      toast("Link Strava tidak valid. Gunakan www.strava.com atau strava.app.link.");
       $("stravaInput")?.focus();
       return;
     }
@@ -373,7 +388,6 @@ async function submitChallenge() {
       } catch (evidenceErr) {
         console.error("EVIDENCE UPLOAD ERROR:", evidenceErr);
         const reason = evidenceErr?.code || evidenceErr?.message || "unknown error";
-        // Keep the submission usable even if Storage is unavailable.
         toast(`Upload evidence gagal (${reason}). Submission tetap disimpan tanpa evidence.`);
       }
     }
