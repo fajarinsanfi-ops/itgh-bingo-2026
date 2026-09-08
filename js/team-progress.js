@@ -24,6 +24,19 @@ function esc(value = "") {
   return String(value).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[c]);
 }
 
+function safeUrl(value = "") {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  try {
+    const url = new URL(raw);
+    const allowedHosts = ["strava.com", "www.strava.com", "strava.app.link"];
+    if (url.protocol !== "https:" || !allowedHosts.includes(url.hostname.toLowerCase())) return "";
+    return url.href;
+  } catch {
+    return "";
+  }
+}
+
 function context() {
   return { variant: String(localStorage.getItem("itgh.variant") || "A").toUpperCase(), week: Number(localStorage.getItem("itgh.week") || 1) };
 }
@@ -105,7 +118,10 @@ function renderTeamRecord() {
   const body = $("recordsBody");
   if (!body) return;
   const rows = currentRows();
-  body.innerHTML = rows.length ? rows.map((row, index) => `
+  body.innerHTML = rows.length ? rows.map((row, index) => {
+    const stravaUrl = safeUrl(row.stravaUrl);
+    const evidenceUrl = String(row.evidenceUrl || "").trim();
+    return `
     <tr class="team-record-row ${row.userId === state.user?.uid ? "is-me" : ""}">
       <td>${index + 1}</td>
       <td><b>${esc(row.challengeName || "Quiz ITGH")}</b><br><span style="color:var(--muted);font-size:8px">${esc(row.achievement || "")}</span></td>
@@ -113,9 +129,10 @@ function renderTeamRecord() {
       <td>${esc(ownerLabel(row))}${row.userId === state.user?.uid ? ' <span class="me-tag">YOU</span>' : ""}</td>
       <td>${row.createdAt?.toDate ? row.createdAt.toDate().toLocaleDateString("id-ID") : "Baru saja"}</td>
       <td><span class="done-pill">✓ Completed</span></td>
-      <td>${row.evidenceUrl ? `<a class="proof" href="${esc(row.evidenceUrl)}" target="_blank" rel="noopener">📎 ${esc(row.evidenceName || "Evidence")}</a>` : "—"}</td>
+      <td>${stravaUrl ? `<a class="proof strava-proof" href="${esc(stravaUrl)}" target="_blank" rel="noopener noreferrer">🏃 Strava</a>` : "—"}</td>
+      <td>${evidenceUrl ? `<a class="proof" href="${esc(evidenceUrl)}" target="_blank" rel="noopener noreferrer">📎 ${esc(row.evidenceName || "Evidence")}</a>` : "—"}</td>
     </tr>
-  `).join("") : `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Belum ada submission tim untuk board/week ini.</td></tr>`;
+  `; }).join("") : `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Belum ada submission tim untuk board/week ini.</td></tr>`;
 }
 
 function renderAll() {
